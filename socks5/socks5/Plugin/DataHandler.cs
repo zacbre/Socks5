@@ -5,7 +5,7 @@ using System.Text;
 
 namespace socks5.Plugin
 {
-    public abstract class SocksDataPluginHandler
+    public abstract class DataHandler
     {
         /// <summary>
         /// Allows you to grab data before it's sent to the end user.

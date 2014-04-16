@@ -61,8 +61,21 @@ namespace socks5.TCP
             }
             SocksRequest req = Socks.RequestTunnel(this);
             if (req == null) { Client.Disconnect(); return; }
+            SocksRequest req1 = new SocksRequest(req.StreamType, req.Type, req.Address, req.Port);
+            //call on plugins for connect callbacks.
+            foreach (ConnectHandler conn in PluginLoader.LoadPlugin(typeof(ConnectHandler)))
+            {
+                if(conn.Enabled)
+                    if (conn.OnConnect(req1) == false)
+                    {
+                        req1.Error = SocksError.Failure;
+                        Client.Send(req1.GetData());
+                        Client.Disconnect();
+                        return;
+                    }
+            }
             //Send Tunnel Data back.
-            SocksTunnel x = new SocksTunnel(this, req);
+            SocksTunnel x = new SocksTunnel(this, req, req1);
             x.Open();
         }
     }

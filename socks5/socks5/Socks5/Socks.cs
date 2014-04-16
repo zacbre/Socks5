@@ -113,11 +113,11 @@ namespace socks5.Socks5
 
     public class SocksRequest
     {
-        public AddressType Type { get; private set; }
+        public AddressType Type { get; set; }
         public StreamTypes StreamType { get; private set; }
-        public string Address { get; private set; }
-        public int Port { get; private set; }
-        public SocksError Error { get; private set; }
+        public string Address { get; set; }
+        public int Port { get; set; }
+        public SocksError Error { get; set; }
         public SocksRequest(StreamTypes type, AddressType addrtype, string address, int port)
         {
             Type = addrtype;

@@ -12,24 +12,26 @@ namespace socks5
     class SocksTunnel
     {
         public SocksRequest Req;
+        public SocksRequest ModifiedReq;
 
         public SocksClient Client;
         public Client RemoteClient;
 
-        private List<SocksDataPluginHandler> Plugins = new List<SocksDataPluginHandler>();
+        private List<DataHandler> Plugins = new List<DataHandler>();
 
-        public SocksTunnel(SocksClient p, SocksRequest req)
+        public SocksTunnel(SocksClient p, SocksRequest req, SocksRequest req1)
         {
             RemoteClient = new Client(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
             Client = p;
             Req = req;
+            ModifiedReq = req1;
         }
 
         public void Open()
         {
-            if (Req.Address == null || Req.Port == null) { Client.Client.Disconnect(); return; }
-            Console.WriteLine("{0}:{1}", Req.Address, Req.Port);
-            var socketArgs = new SocketAsyncEventArgs { RemoteEndPoint = new IPEndPoint(Req.IP, Req.Port) };
+            if (ModifiedReq.Address == null || ModifiedReq.Port == 0) { Client.Client.Disconnect(); return; }
+            Console.WriteLine("{0}:{1}", ModifiedReq.Address, ModifiedReq.Port);
+            var socketArgs = new SocketAsyncEventArgs { RemoteEndPoint = new IPEndPoint(ModifiedReq.IP, ModifiedReq.Port) };
             socketArgs.Completed += socketArgs_Completed;
             RemoteClient.Sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             if (!RemoteClient.Sock.ConnectAsync(socketArgs))
@@ -64,7 +66,7 @@ namespace socks5
             try
             {
                 //all plugins get the event thrown.
-                foreach (SocksDataPluginHandler data in PluginLoader.LoadPlugin(typeof(SocksDataPluginHandler)))
+                foreach (DataHandler data in PluginLoader.LoadPlugin(typeof(DataHandler)))
                     Plugins.Push(data);
                 Client.Client.onDataReceived += Client_onDataReceived;
                 RemoteClient.onDataReceived += RemoteClient_onDataReceived;
@@ -84,7 +86,7 @@ namespace socks5
 
         void RemoteClient_onDataReceived(object sender, DataEventArgs e)
         {
-            foreach (SocksDataPluginHandler f in Plugins)
+            foreach (DataHandler f in Plugins)
                 if(f.Enabled)
                     f.OnDataReceived(this, e);
             Client.Client.SendAsync(e.Buffer, e.Offset, e.Count);
@@ -93,7 +95,7 @@ namespace socks5
 
         void Client_onDataReceived(object sender, DataEventArgs e)
         {
-            foreach (SocksDataPluginHandler f in Plugins)
+            foreach (DataHandler f in Plugins)
                 if(f.Enabled)
                     f.OnDataSent(this, e);
             RemoteClient.SendAsync(e.Buffer, e.Offset, e.Count);

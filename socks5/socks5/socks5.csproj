@@ -40,12 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExamplePlugins\ConnectHandlerExample.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="ExamplePlugins\DataHandlerExample.cs" />
+    <Compile Include="Plugin\ConnectHandler.cs" />
     <Compile Include="Plugin\LoginHandler.cs" />
     <Compile Include="ExamplePlugins\LoginHandlerExample.cs" />
     <Compile Include="Plugin\PluginLoader.cs" />
-    <Compile Include="Plugin\SocksDataPluginHandler.cs" />
+    <Compile Include="Plugin\DataHandler.cs" />
     <Compile Include="Socks5Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Socks5\Socks.cs" />

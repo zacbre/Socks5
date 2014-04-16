@@ -5,7 +5,7 @@ using System.Text;
 
 namespace socks5.ExamplePlugins
 {
-    class DataHandlerExample : SocksDataPluginHandler
+    class DataHandlerExample : DataHandler
     {
         private string httpString = "HTTP/1.1";
 
