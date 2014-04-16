@@ -34,7 +34,7 @@ namespace socks5.ExamplePlugins
 
         public override bool Enabled
         {
-            get { return true; }
+            get { return false; }
         }
     }
 }
