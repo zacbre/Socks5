@@ -76,10 +76,9 @@ namespace socks5.Socks5
                                     fwd += domainlen + 1;
                                 }
                                 break;
-                            case default:
+                            case AddressType.IPv6:
                                 //can't handle IPV6 traffic just yet.
                                 return null;
-                                break;
                         }
                         byte[] po = new byte[2];
                         Array.Copy(buff, fwd, po, 0, 2);
