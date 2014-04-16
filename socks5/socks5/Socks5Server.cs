@@ -20,6 +20,7 @@ namespace socks5
         public Socks5Server(IPAddress ip, int port)
         {
             Timeout = 1000;
+            LoadPluginsFromDisk = false;
             _server = new TcpServer(ip, port);
             _server.onClientConnected += _server_onClientConnected;
             _server.onClientDisconnected += _server_onClientDisconnected;
