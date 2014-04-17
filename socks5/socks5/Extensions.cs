@@ -9,7 +9,6 @@ namespace System.Runtime.CompilerServices
 }
 namespace socks5
 {
-
     public static class Extensions
     {
         public static string ToHex(this int value)
