@@ -30,15 +30,20 @@ namespace socks5.TCP
         {
             while(accept)
             {
-                Socket x = p.AcceptSocket();
-                //New Client.
-                Client f = new Client(x);
-                f.onClientDisconnected += onClientDisconnected;
-                f.onDataReceived += onDataReceived;
-                f.onDataSent += onDataSent;
-                f.onClientDisconnected += f_onClientDisconnected;
-                onClientConnected(this, new ClientEventArgs(f));
-                this.Clients.Add(f);
+                try
+                {
+                    Socket x = p.AcceptSocket();
+                    //New Client.
+                    Client f = new Client(x);
+                    f.onClientDisconnected += onClientDisconnected;
+                    f.onDataReceived += onDataReceived;
+                    f.onDataSent += onDataSent;
+                    f.onClientDisconnected += f_onClientDisconnected;
+                    onClientConnected(this, new ClientEventArgs(f));
+                    this.Clients.Add(f);
+                }
+                catch { //error, most likely server shutdown.
+                }
             }
         }
 
