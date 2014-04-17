@@ -32,6 +32,11 @@ namespace socks5
             _server.Start();
         }
 
+        public void Stop()
+        {
+            _server.Stop();
+        }
+
         void _server_onClientDisconnected(object sender, ClientEventArgs e)
         {
             e.Client.onDataReceived -= onDataReceived;

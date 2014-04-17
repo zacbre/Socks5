@@ -20,21 +20,18 @@ namespace socks5.Plugin
                     {
                         if (assemblytype.IsAssignableFrom(f) && f != assemblytype)
                         {
-                            //Load the module.
-                            //Console.WriteLine("Loaded type {0}.", f.ToString());
                             object type = Activator.CreateInstance(f);
                             types.Push(type);
                         }
                     }
                     catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                 }
-                foreach (Type f in Assembly.GetCallingAssembly().GetTypes())
+                foreach (Type f in Assembly.GetEntryAssembly().GetTypes())
                 {
                     try
                     {
                         if (assemblytype.IsAssignableFrom(f) && f != assemblytype)
                         {
-                            //Load the module.
                             //Console.WriteLine("Loaded type {0}.", f.ToString());
                             object type = Activator.CreateInstance(f);
                             types.Push(type);
