@@ -28,6 +28,20 @@ namespace socks5.Plugin
                     }
                     catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                 }
+                foreach (Type f in Assembly.GetCallingAssembly().GetTypes())
+                {
+                    try
+                    {
+                        if (assemblytype.IsAssignableFrom(f) && f != assemblytype)
+                        {
+                            //Load the module.
+                            //Console.WriteLine("Loaded type {0}.", f.ToString());
+                            object type = Activator.CreateInstance(f);
+                            types.Push(type);
+                        }
+                    }
+                    catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+                }
                 //load plugins from disk?
                 if (LoadPluginsFromDisk)
                 {
