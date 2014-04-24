@@ -158,25 +158,21 @@ namespace socks5.Socks5
         public byte[] GetData()
         {
             byte[] data;
-            var port = IPAddress.NetworkToHostOrder(Port);
+            var port = IPAddress.NetworkToHostOrder(Convert.ToInt16(Port));
             if (Type == AddressType.IP)
             {
                 data = new byte[10];
-                var num = IPAddress.NetworkToHostOrder(IP.Address);
-                data[4] = (byte)((num));
-                data[5] = (byte)((num >> 8) & 0xFF);
-                data[6] = (byte)((num >> 16) & 0xFF);
-                data[7] = (byte)((num >> 24) & 0xFF);
-                data[8] = (byte)(port & 0xFF);
-                data[9] = (byte)((port >> 8) & 0xFF);
+                string[] content = IP.ToString().Split('.');
+                for (int i = 4; i < content.Length + 4; i++)
+                    data[i] = Convert.ToByte(Convert.ToInt32(content[i - 4]));
+                Buffer.BlockCopy(BitConverter.GetBytes(port), 0, data, 8, 2);
             }
             else if (Type == AddressType.Domain)
             {
                 data = new byte[Address.Length + 7];
                 data[4] = Convert.ToByte(Address.Length);
                 Buffer.BlockCopy(Encoding.ASCII.GetBytes(Address), 0, data, 5, Address.Length);
-                data[data.Length - 2] = (byte)(port & 0xFF);
-                data[data.Length - 1] = (byte)((port >> 8) & 0xFF);
+                Buffer.BlockCopy(BitConverter.GetBytes(port), 0, data, data.Length - 2, 2);
             }
             else return null;
             data[0] = 0x05;                

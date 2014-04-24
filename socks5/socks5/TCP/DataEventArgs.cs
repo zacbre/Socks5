@@ -1,4 +1,5 @@
-﻿using System;
+﻿using socks5.Socks5;
+using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
@@ -11,12 +12,14 @@ namespace socks5.TCP
         public byte[] Buffer { get; set; }
         public int Count { get; set; }
         public int Offset { get; set; }
-        public DataEventArgs(Client client, byte[] buffer, int count)
+        public SocksRequest Request { get; set; }
+        public DataEventArgs(Client client, byte[] buffer, int count, Socks5.SocksRequest req = null)
         {
             Client = client;
             Buffer = buffer;
             Count = count;
             Offset = 0;
+            Request = req;
         }
     }
 }

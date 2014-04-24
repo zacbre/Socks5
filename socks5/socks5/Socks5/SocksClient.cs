@@ -16,7 +16,7 @@ namespace socks5.TCP
             Client = cli;
         }
 
-        public void Begin()
+        public void Begin(int PacketSize)
         {
             List<AuthTypes> authtypes = Socks.RequestAuth(this);
             if (authtypes.Count <= 0)
@@ -68,14 +68,14 @@ namespace socks5.TCP
                 if(conn.Enabled)
                     if (conn.OnConnect(req1) == false)
                     {
-                        req1.Error = SocksError.Failure;
-                        Client.Send(req1.GetData());
+                        req.Error = SocksError.Failure;
+                        Client.Send(req.GetData());
                         Client.Disconnect();
                         return;
                     }
             }
             //Send Tunnel Data back.
-            SocksTunnel x = new SocksTunnel(this, req, req1);
+            SocksTunnel x = new SocksTunnel(this, req, req1, PacketSize);
             x.Open();
         }
     }

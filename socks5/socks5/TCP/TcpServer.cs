@@ -12,6 +12,7 @@ namespace socks5.TCP
         private TcpListener p;
         private List<Thread> acceptthreads = new List<Thread>();
         private bool accept = false;
+        public int PacketSize{get;set;}
 
         public List<Client> Clients = new List<Client>();
 
@@ -34,7 +35,7 @@ namespace socks5.TCP
                 {
                     Socket x = p.AcceptSocket();
                     //New Client.
-                    Client f = new Client(x);
+                    Client f = new Client(x, PacketSize);
                     f.onClientDisconnected += onClientDisconnected;
                     f.onDataReceived += onDataReceived;
                     f.onDataSent += onDataSent;

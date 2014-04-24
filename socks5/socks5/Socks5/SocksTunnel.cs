@@ -19,9 +19,9 @@ namespace socks5
 
         private List<DataHandler> Plugins = new List<DataHandler>();
 
-        public SocksTunnel(SocksClient p, SocksRequest req, SocksRequest req1)
+        public SocksTunnel(SocksClient p, SocksRequest req, SocksRequest req1, int PacketSize)
         {
-            RemoteClient = new Client(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+            RemoteClient = new Client(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp), PacketSize);
             Client = p;
             Req = req;
             ModifiedReq = req1;
@@ -29,7 +29,7 @@ namespace socks5
 
         public void Open()
         {
-            if (ModifiedReq.Address == null || ModifiedReq.Port == 0) { Client.Client.Disconnect(); return; }
+            if (ModifiedReq.Address == null || ModifiedReq.Port <= -1) { Client.Client.Disconnect(); Console.WriteLine("Disconnected.");  return; }
             Console.WriteLine("{0}:{1}", ModifiedReq.Address, ModifiedReq.Port);
             var socketArgs = new SocketAsyncEventArgs { RemoteEndPoint = new IPEndPoint(ModifiedReq.IP, ModifiedReq.Port) };
             socketArgs.Completed += socketArgs_Completed;
@@ -43,12 +43,14 @@ namespace socks5
             byte[] request = Req.GetData(); // Client.Client.Send(Req.GetData());
             if (e.SocketError != SocketError.Success)
             {
+                Console.WriteLine("Error while connecting: {0}", e.SocketError.ToString());
                 request[1] = (byte)SocksError.Unreachable;
             }
             else
             {
                 request[1] = 0x00;
             }
+
             Client.Client.Send(request);
 
             switch (e.LastOperation)
@@ -56,7 +58,7 @@ namespace socks5
                 case SocketAsyncOperation.Connect:
                     //connected;
                     ConnectHandler(e);
-                    break;
+                    break;               
             }
         }
 
@@ -86,6 +88,7 @@ namespace socks5
 
         void RemoteClient_onDataReceived(object sender, DataEventArgs e)
         {
+            e.Request = this.ModifiedReq;
             foreach (DataHandler f in Plugins)
                 if(f.Enabled)
                     f.OnDataReceived(this, e);
@@ -95,6 +98,7 @@ namespace socks5
 
         void Client_onDataReceived(object sender, DataEventArgs e)
         {
+            e.Request = this.ModifiedReq;
             foreach (DataHandler f in Plugins)
                 if(f.Enabled)
                     f.OnDataSent(this, e);

@@ -8,6 +8,7 @@ namespace socks5
     public class Socks5Server
     {
         public int Timeout { get; set; }
+        public int PacketSize { get; set; }
         public bool LoadPluginsFromDisk { get; set; }
 
         private TcpServer _server;
@@ -20,6 +21,7 @@ namespace socks5
         public Socks5Server(IPAddress ip, int port)
         {
             Timeout = 1000;
+            PacketSize = 65535;
             LoadPluginsFromDisk = false;
             _server = new TcpServer(ip, port);
             _server.onClientConnected += _server_onClientConnected;
@@ -29,6 +31,7 @@ namespace socks5
         public void Start()
         {
             Plugin.PluginLoader.LoadPluginsFromDisk = LoadPluginsFromDisk;
+            _server.PacketSize = PacketSize;
             _server.Start();
         }
 
@@ -52,7 +55,7 @@ namespace socks5
             client.Client.onDataReceived += Client_onDataReceived;
             client.Client.onDataSent += Client_onDataSent;
             client.onClientDisconnected += client_onClientDisconnected;
-            client.Begin();
+            client.Begin(this.PacketSize);
         }
 
         void client_onClientDisconnected(object sender, SocksClientEventArgs e)

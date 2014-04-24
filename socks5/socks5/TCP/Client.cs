@@ -11,15 +11,15 @@ namespace socks5.TCP
 
         public event EventHandler<DataEventArgs> onDataReceived = delegate { };
         public event EventHandler<DataEventArgs> onDataSent = delegate { };
-        
 
         public Socket Sock { get; set; }
-        private byte[] buffer = new byte[2048];
-        public Client(Socket sock)
+        private byte[] buffer;
+        public Client(Socket sock, int PacketSize)
         {
             //start the data exchange.
             Sock = sock;
             onClientDisconnected = delegate { };
+            buffer = new byte[PacketSize];
         }
 
         private void DataReceived(IAsyncResult res)
