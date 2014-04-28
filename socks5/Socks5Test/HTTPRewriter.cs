@@ -27,7 +27,7 @@ namespace Socks5Test
 
         public override bool Enabled
         {
-            get { return true; }
+            get { return false; }
         }
     }
 }

@@ -11,7 +11,7 @@ namespace socks5
         public int PacketSize { get; set; }
         public bool LoadPluginsFromDisk { get; set; }
 
-        private TcpServer _server;
+        public TcpServer _server;
 
         public List<SocksClient> Clients = new List<SocksClient>();
 

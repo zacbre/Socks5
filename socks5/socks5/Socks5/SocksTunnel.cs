@@ -35,7 +35,7 @@ namespace socks5
         public void Open()
         {
             if (ModifiedReq.Address == null || ModifiedReq.Port <= -1) { Client.Client.Disconnect(); Console.WriteLine("Disconnected.");  return; }
-            Console.WriteLine("{0}:{1}", ModifiedReq.Address, ModifiedReq.Port);
+            //Console.WriteLine("{0}:{1}", ModifiedReq.Address, ModifiedReq.Port);
             var socketArgs = new SocketAsyncEventArgs { RemoteEndPoint = new IPEndPoint(ModifiedReq.IP, ModifiedReq.Port) };
             socketArgs.Completed += socketArgs_Completed;
             RemoteClient.Sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);

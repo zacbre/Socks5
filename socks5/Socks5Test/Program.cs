@@ -13,6 +13,11 @@ namespace Socks5Test
             x.onDataReceived += x_onDataReceived;
             x.onDataSent += x_onDataSent;
             x.Start();
+            //Start showing network stats.
+            while (true)
+            {
+                Console.Write("\rTotal Clients: {0}\tTotal Received: {1}MB\tTotal Sent: {2}MB\t", x._server.Stats.TotalClients, ((x._server.Stats.NetworkReceived / 1024) / 1024) + "." + ((x._server.Stats.NetworkReceived / 1024) % 1024), ((x._server.Stats.NetworkSent / 1024) / 1024) + "." + ((x._server.Stats.NetworkSent / 1024) % 1024));
+            }
         }
 
         static void x_onDataSent(object sender, socks5.TCP.DataEventArgs e)

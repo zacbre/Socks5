@@ -71,7 +71,7 @@ namespace socks5.TCP
         void f_onClientDisconnected(object sender, ClientEventArgs e)
         {
             this.Clients.Remove(e.Client);
-            this.Stats.TotalClients--;
+            this.Stats.TotalClients = this.Clients.Count;
         }
 
         public void Start()
