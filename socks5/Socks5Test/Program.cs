@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using socks5;
 using System.Net;
+using System.Threading;
 namespace Socks5Test
 {
     class Program
@@ -16,7 +17,9 @@ namespace Socks5Test
             //Start showing network stats.
             while (true)
             {
-                Console.Write("\rTotal Clients: {0}\tTotal Received: {1}MB\tTotal Sent: {2}MB\t", x._server.Stats.TotalClients, ((x._server.Stats.NetworkReceived / 1024) / 1024) + "." + ((x._server.Stats.NetworkReceived / 1024) % 1024), ((x._server.Stats.NetworkSent / 1024) / 1024) + "." + ((x._server.Stats.NetworkSent / 1024) % 1024));
+                Console.Clear();
+                Console.Write("Total Clients: {0}\tTotal Received: {1:0.00##}MB\tTotal Sent: {2:0.00##}MB", x._server.Stats.TotalClients, ((x._server.Stats.NetworkReceived / 1024f) / 1024f), ((x._server.Stats.NetworkSent / 1024f) / 1024f));
+                Thread.Sleep(1000);
             }
         }
 
