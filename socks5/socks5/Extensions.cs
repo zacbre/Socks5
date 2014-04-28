@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 namespace System.Runtime.CompilerServices
 {
@@ -38,6 +39,16 @@ namespace socks5
 
             }
             return index;
+        }
+
+        public static int FromHex(this string value)
+        {
+            // strip the leading 0x
+            if (value.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+            {
+                value = value.Substring(2);
+            }
+            return Int32.Parse(value, NumberStyles.HexNumber);
         }
 
         public static int FindString(this byte[] src, string tofind, int startIndex = 0)

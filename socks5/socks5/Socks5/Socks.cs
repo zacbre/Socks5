@@ -84,10 +84,7 @@ namespace socks5.Socks5
                         Array.Copy(buff, fwd, po, 0, 2);
                         Int16 x = BitConverter.ToInt16(po, 0);
                         int port = Convert.ToInt32(IPAddress.NetworkToHostOrder(x));
-                        if (port < 1)
-                        {
-                            port += 65536;
-                        }
+                        port = (port < 1 ? port + 65536 : port);
                         return new SocksRequest(StreamTypes.Stream, (AddressType)buff[3], address, port);
                     }
                     break;
@@ -158,7 +155,7 @@ namespace socks5.Socks5
         public byte[] GetData()
         {
             byte[] data;
-            var port = IPAddress.NetworkToHostOrder(Convert.ToInt16(Port));
+            var port = IPAddress.NetworkToHostOrder(Port);
             if (Type == AddressType.IP)
             {
                 data = new byte[10];

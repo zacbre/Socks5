@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using socks5;
+using socks5.HTTP;
 namespace Socks5Test
 {
     class HTTPRewriter : socks5.Plugin.DataHandler
@@ -13,6 +14,10 @@ namespace Socks5Test
                 e.Buffer = e.Buffer.ReplaceString("\r\n", "\r\nX-Served-By: Socks5Server\r\n");
                 e.Count = e.Count + "X-Served-By: Socks5Server\r\n".Length;
             }
+            //get chunked.
+            Chunked c = new Chunked(e.Client.Sock, e.Buffer, e.Count);
+            e.Buffer = c.ChunkedData;
+            e.Count = c.ChunkedData.Length;
         }
 
         public override void OnDataSent(object sender, socks5.TCP.DataEventArgs e)

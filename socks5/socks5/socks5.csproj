@@ -43,6 +43,7 @@
     <Compile Include="ExamplePlugins\ConnectHandlerExample.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="ExamplePlugins\DataHandlerExample.cs" />
+    <Compile Include="HTTP\Chunked.cs" />
     <Compile Include="Plugin\ConnectHandler.cs" />
     <Compile Include="Plugin\LoginHandler.cs" />
     <Compile Include="ExamplePlugins\LoginHandlerExample.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="TCP\ClientEventArgs.cs" />
     <Compile Include="TCP\DataEventArgs.cs" />
     <Compile Include="Socks5\SocksClient.cs" />
+    <Compile Include="TCP\Stats.cs" />
     <Compile Include="TCP\TcpServer.cs" />
   </ItemGroup>
   <ItemGroup />

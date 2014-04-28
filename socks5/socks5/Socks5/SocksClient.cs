@@ -16,7 +16,7 @@ namespace socks5.TCP
             Client = cli;
         }
 
-        public void Begin(int PacketSize)
+        public void Begin(int PacketSize, int Timeout)
         {
             List<AuthTypes> authtypes = Socks.RequestAuth(this);
             if (authtypes.Count <= 0)
@@ -75,7 +75,7 @@ namespace socks5.TCP
                     }
             }
             //Send Tunnel Data back.
-            SocksTunnel x = new SocksTunnel(this, req, req1, PacketSize);
+            SocksTunnel x = new SocksTunnel(this, req, req1, PacketSize, Timeout);
             x.Open();
         }
     }
