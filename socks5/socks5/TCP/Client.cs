@@ -26,8 +26,10 @@ namespace socks5.TCP
         {
             try
             {
-                int received = ((Socket)res.AsyncState).EndReceive(res);
-                if (received <= 0)
+                SocketError err = SocketError.Success;
+                int received = 0;
+                if (((Socket)res.AsyncState).Connected) received = ((Socket)res.AsyncState).EndReceive(res, out err);
+                if (received <= 0 || err != SocketError.Success)
                 {
                     //disconnected.
                     onClientDisconnected(this, new ClientEventArgs(this));
@@ -72,13 +74,15 @@ namespace socks5.TCP
         {
             try
             {
-                if (this.Sock != null)
+                if (this.Sock != null && this.Sock.Connected)
                 {
                     onClientDisconnected(this, new ClientEventArgs(this));
                     this.Sock.Shutdown(SocketShutdown.Both);
                     this.Sock.Close();
                     return;
                 }
+                else if (!this.Sock.Connected)
+                    onClientDisconnected(this, new ClientEventArgs(this));
             }
             catch { }
         }
@@ -107,7 +111,7 @@ namespace socks5.TCP
         {
             try
             {
-                if (this.Sock != null)
+                if (this.Sock != null && this.Sock.Connected)
                 {
                     DataEventArgs data = new DataEventArgs(this, buff, count);
                     this.onDataSent(this, data);
