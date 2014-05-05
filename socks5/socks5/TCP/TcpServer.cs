@@ -22,29 +22,11 @@ namespace socks5.TCP
         public event EventHandler<DataEventArgs> onDataReceived = delegate { };
         public event EventHandler<DataEventArgs> onDataSent = delegate { };
 
-        public Stats Stats;
         public TcpServer(IPAddress ip, int port)
         {
             p = new TcpListener(ip, port);
-            onDataReceived += TcpServer_onDataReceived;
-            onDataSent += TcpServer_onDataSent;
-            Stats = new Stats();
         }
-
-        void TcpServer_onDataSent(object sender, DataEventArgs e)
-        {
-            //
-            Stats.NetworkSent += (ulong)e.Count;
-            Stats.PacketsSent++;
-        }
-
-        void TcpServer_onDataReceived(object sender, DataEventArgs e)
-        {
-            //Update data stats.
-            Stats.NetworkReceived += (ulong)e.Count;
-            Stats.PacketsReceived++;
-        }
-
+        
         private void AcceptConnections()
         {
             while(accept)
@@ -59,8 +41,6 @@ namespace socks5.TCP
                     f.onDataSent += onDataSent;
                     f.onClientDisconnected += f_onClientDisconnected;
                     onClientConnected(this, new ClientEventArgs(f));
-                    this.Stats.ClientsSinceRun++;
-                    this.Stats.TotalClients++;
                     this.Clients.Add(f);
                 }
                 catch { //error, most likely server shutdown.
@@ -71,7 +51,6 @@ namespace socks5.TCP
         void f_onClientDisconnected(object sender, ClientEventArgs e)
         {
             this.Clients.Remove(e.Client);
-            this.Stats.TotalClients = this.Clients.Count;
         }
 
         public void Start()

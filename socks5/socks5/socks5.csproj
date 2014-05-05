@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TCP\BandwidthCounter.cs" />
     <Compile Include="ExamplePlugins\ConnectHandlerExample.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="ExamplePlugins\DataHandlerExample.cs" />

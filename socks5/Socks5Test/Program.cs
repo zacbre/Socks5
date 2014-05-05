@@ -18,7 +18,8 @@ namespace Socks5Test
             while (true)
             {
                 Console.Clear();
-                Console.Write("Total Clients: {0}\tTotal Received: {1:0.00##}MB\tTotal Sent: {2:0.00##}MB", x._server.Stats.TotalClients, ((x._server.Stats.NetworkReceived / 1024f) / 1024f), ((x._server.Stats.NetworkSent / 1024f) / 1024f));
+                Console.Write("Total Clients: \t{0}\nTotal Recvd: \t{1:0.00##}MB\nTotal Sent: \t{2:0.00##}MB\n", x.Stats.TotalClients, ((x.Stats.NetworkReceived / 1024f) / 1024f), ((x.Stats.NetworkSent / 1024f) / 1024f));
+                Console.Write("Receiving/sec: \t{0}\nSending/sec: \t{1}", x.Stats.BytesReceivedPerSec, x.Stats.BytesSentPerSec);
                 Thread.Sleep(1000);
             }
         }
