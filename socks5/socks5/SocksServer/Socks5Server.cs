@@ -47,7 +47,7 @@ namespace socks5
             e.Client.onDataReceived -= onDataReceived;
             e.Client.onDataSent -= onDataSent;
             //Console.WriteLine("Client disconnected.");
-            Stats.ResetClients(_server.Clients.Count);
+            Stats.ResetClients(Clients.Count);
         }
 
         void _server_onClientConnected(object sender, ClientEventArgs e)
