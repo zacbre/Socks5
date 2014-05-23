@@ -13,6 +13,8 @@ namespace socks5.TCP
         private bool accept = false;
         public int PacketSize{get;set;}
 
+        public List<Client> Clients = new List<Client>();
+
         public event EventHandler<ClientEventArgs> onClientConnected = delegate { };
         public event EventHandler<ClientEventArgs> onClientDisconnected = delegate { };
 
@@ -50,7 +52,14 @@ namespace socks5.TCP
             f.onClientDisconnected += onClientDisconnected;
             f.onDataReceived += onDataReceived;
             f.onDataSent += onDataSent;
+            f.onClientDisconnected += f_onClientDisconnected;
             onClientConnected(this, new ClientEventArgs(f));
+            this.Clients.Add(f);
+        }
+
+        void f_onClientDisconnected(object sender, ClientEventArgs e)
+        {
+            this.Clients.Remove(e.Client);
         }
 
         public void Start()
