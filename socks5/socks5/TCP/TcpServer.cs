@@ -10,7 +10,6 @@ namespace socks5.TCP
     public class TcpServer
     {
         private TcpListener p;
-        private List<Thread> acceptthreads = new List<Thread>();
         private bool accept = false;
         public int PacketSize{get;set;}
 
@@ -26,26 +25,36 @@ namespace socks5.TCP
         {
             p = new TcpListener(ip, port);
         }
-        
+
+        private ManualResetEvent Task = new ManualResetEvent(false);
+
         private void AcceptConnections()
         {
             while(accept)
             {
                 try
                 {
-                    Socket x = p.AcceptSocket();
-                    //New Client.
-                    Client f = new Client(x, PacketSize);
-                    f.onClientDisconnected += onClientDisconnected;
-                    f.onDataReceived += onDataReceived;
-                    f.onDataSent += onDataSent;
-                    f.onClientDisconnected += f_onClientDisconnected;
-                    onClientConnected(this, new ClientEventArgs(f));
-                    this.Clients.Add(f);
+                    Task.Reset();
+                    p.BeginAcceptSocket(new AsyncCallback(AcceptClient), p);
+                    Task.WaitOne();
                 }
                 catch { //error, most likely server shutdown.
                 }
             }
+        }
+
+        void AcceptClient(IAsyncResult res)
+        {
+            TcpListener px = (TcpListener)res.AsyncState;
+            Socket x = px.EndAcceptSocket(res);
+            Task.Set();
+            Client f = new Client(x, PacketSize);
+            f.onClientDisconnected += onClientDisconnected;
+            f.onDataReceived += onDataReceived;
+            f.onDataSent += onDataSent;
+            f.onClientDisconnected += f_onClientDisconnected;
+            onClientConnected(this, new ClientEventArgs(f));
+            this.Clients.Add(f);
         }
 
         void f_onClientDisconnected(object sender, ClientEventArgs e)
@@ -59,12 +68,6 @@ namespace socks5.TCP
             {
                 accept = true;
                 p.Start(10000);
-                //start 4 new threads for pooled listening.
-                for (int i = 0; i < 4; i++)
-                {
-                    acceptthreads.Add(new Thread(new ThreadStart(AcceptConnections)));
-                    acceptthreads[acceptthreads.Count - 1].Start();
-                }
             }
         }
 
