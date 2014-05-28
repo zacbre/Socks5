@@ -31,8 +31,6 @@ namespace socks5.TCP
                 if (((Socket)res.AsyncState).Connected) received = ((Socket)res.AsyncState).EndReceive(res, out err);
                 if (received <= 0 || err != SocketError.Success)
                 {
-                    //disconnected.
-                    onClientDisconnected(this, new ClientEventArgs(this));
                     this.Disconnect();
                     return;
                 }
@@ -79,10 +77,12 @@ namespace socks5.TCP
                     onClientDisconnected(this, new ClientEventArgs(this));
                     this.Sock.Shutdown(SocketShutdown.Both);
                     this.Sock.Close();
+                    this.Sock = null;
                     return;
                 }
-                else if (!this.Sock.Connected)
+                else
                     onClientDisconnected(this, new ClientEventArgs(this));
+                this.Dispose();
             }
             catch { }
         }
@@ -126,16 +126,54 @@ namespace socks5.TCP
 
         public bool Send(byte[] buff, int offset, int count)
         {
-            if(this.Sock != null)
+            try
             {
-                if(this.Sock.Send(buff, offset, count, SocketFlags.None) <= 0)
+                if (this.Sock != null)
                 {
-                    this.Disconnect();
-                    return false;
+                    if (this.Sock.Send(buff, offset, count, SocketFlags.None) <= 0)
+                    {
+                        this.Disconnect();
+                        return false;
+                    }
+                    return true;
                 }
-                return true;
+                return false;
             }
-            return false;
+            catch
+            {
+                this.Disconnect();
+                return false;
+            }
+        }
+        bool disposed = false;
+
+        // Public implementation of Dispose pattern callable by consumers. 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        // Protected implementation of Dispose pattern. 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                // Free any other managed objects here. 
+                //
+                Sock = null;
+                buffer = null;
+                onClientDisconnected = null;
+                onDataReceived = null;
+                onDataSent = null;
+            }
+
+            // Free any unmanaged objects here. 
+            //
+            disposed = true;
         }
     }
 }

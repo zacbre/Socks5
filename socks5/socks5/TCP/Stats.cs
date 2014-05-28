@@ -19,6 +19,7 @@ namespace socks5.TCP
             TotalClients++;
             ClientsSinceRun++;
         }
+
         public void ResetClients(int count)
         {
             TotalClients = count;

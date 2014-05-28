@@ -18,6 +18,7 @@ namespace socks5.TCP
 
         public void Begin(int PacketSize, int Timeout)
         {
+            Client.onClientDisconnected += Client_onClientDisconnected;
             List<AuthTypes> authtypes = Socks.RequestAuth(this);
             if (authtypes.Count <= 0)
             {
@@ -77,6 +78,11 @@ namespace socks5.TCP
             //Send Tunnel Data back.
             SocksTunnel x = new SocksTunnel(this, req, req1, PacketSize, Timeout);
             x.Open();
+        }
+
+        void Client_onClientDisconnected(object sender, ClientEventArgs e)
+        {
+            this.onClientDisconnected(this, new SocksClientEventArgs(this));
         }
     }
     public class User

@@ -20,7 +20,7 @@ namespace socks5
         private List<DataHandler> Plugins = new List<DataHandler>();
 
         private int Timeout = 10000;
-        private int PacketSize = 65535;
+        private int PacketSize = 128;
 
         public SocksTunnel(SocksClient p, SocksRequest req, SocksRequest req1, int packetSize, int timeout)
         {

@@ -9,19 +9,20 @@ namespace socks5.Plugin
     class PluginLoader
     {
         public static bool LoadPluginsFromDisk { get; set; }
-        public static List<object> LoadPlugin(Type assemblytype)
+        //load plugin staticly.
+        public static List<object> Plugins = new List<object>();
+        private static void LoadPlugins()
         {
-            List<object> types = new List<object>();
             try
             {
                 foreach (Type f in Assembly.GetExecutingAssembly().GetTypes())
                 {
                     try
                     {
-                        if (assemblytype.IsAssignableFrom(f) && f != assemblytype)
+                        if (!CheckType(f))
                         {
                             object type = Activator.CreateInstance(f);
-                            types.Push(type);
+                            Plugins.Push(type);
                         }
                     }
                     catch (Exception ex) { Console.WriteLine(ex.ToString()); }
@@ -30,11 +31,11 @@ namespace socks5.Plugin
                 {
                     try
                     {
-                        if (assemblytype.IsAssignableFrom(f) && f != assemblytype)
+                        if (!CheckType(f))
                         {
                             //Console.WriteLine("Loaded type {0}.", f.ToString());
                             object type = Activator.CreateInstance(f);
-                            types.Push(type);
+                            Plugins.Push(type);
                         }
                     }
                     catch (Exception ex) { Console.WriteLine(ex.ToString()); }
@@ -55,10 +56,10 @@ namespace socks5.Plugin
                             {
                                 foreach (Type f in g.GetTypes())
                                 {
-                                    if (assemblytype.IsAssignableFrom(f) && f != assemblytype)
+                                    if (!CheckType(f))
                                     {
                                         object plug = Activator.CreateInstance(f);
-                                        types.Push(plug);
+                                        Plugins.Push(plug);
                                     }
                                 }
                             }
@@ -71,7 +72,34 @@ namespace socks5.Plugin
                 foreach (Exception p in e.LoaderExceptions)
                     Console.WriteLine(p.ToString());
             }
-            return types;
+            loaded = true;
+        }
+        static List<Type> pluginTypes = new List<Type>(){ typeof(LoginHandler), typeof(DataHandler), typeof(ConnectHandler)};
+        private static bool CheckType(Type p)
+        {
+            foreach(Type x in pluginTypes)
+            {
+                if (x.IsAssignableFrom(p) && p != x)
+                    continue;
+                else
+                    return true;
+            }
+            return false;
+        }
+        static bool loaded = false;
+        public static List<object> LoadPlugin(Type assemblytype)
+        {
+            //make sure plugins are loaded.
+            if (!loaded) LoadPlugins();
+            List<object> list = new List<object>();
+            foreach (object x in Plugins)
+            {
+                if (assemblytype.IsAssignableFrom(x.GetType()))
+                {
+                    list.Push(x);
+                }
+            }
+            return list;
         }
     }
 }
