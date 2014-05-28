@@ -46,7 +46,10 @@ namespace socks5.TCP
                     LoginStatus status = lh.HandleLogin(user);
                     Client.Send(new byte[] { (byte)HeaderTypes.Socks5, (byte)status });
                     if (status == LoginStatus.Denied)
+                    {
+                        Client.Disconnect();
                         return;
+                    }
                     else if (status == LoginStatus.Correct)
                     {
                         Authenticated = true;

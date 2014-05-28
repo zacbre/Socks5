@@ -71,8 +71,8 @@ namespace socks5
             client.Client.onDataReceived += Client_onDataSent;
             client.Client.onDataSent += Client_onDataReceived;
             client.onClientDisconnected += client_onClientDisconnected;
-            client.Begin(this.PacketSize, this.Timeout);
             Clients.Add(client);
+            client.Begin(this.PacketSize, this.Timeout);
         }
 
         void client_onClientDisconnected(object sender, SocksClientEventArgs e)
