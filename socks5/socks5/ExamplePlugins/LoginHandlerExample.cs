@@ -14,12 +14,12 @@ namespace socks5.ExamplePlugins
 
         public override bool LoginRequired
         {
-            get { return false; }
+            get { return true; }
         }
 
         public override bool Enabled 
         {
-            get { return false; }
+            get { return true; }
         }
     }
 }

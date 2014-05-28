@@ -4,6 +4,7 @@ using System.Text;
 using socks5.TCP;
 using System.Net;
 using System.Threading;
+using socks5.Plugin;
 namespace socks5
 {
     public class Socks5Server
@@ -28,6 +29,8 @@ namespace socks5
             Timeout = 1000;
             PacketSize = 128;
             LoadPluginsFromDisk = false;
+            //load plugins.
+            PluginLoader.LoadPlugins();            
             Stats = new Stats();
             _server = new TcpServer(ip, port);
             _server.onClientConnected += _server_onClientConnected;

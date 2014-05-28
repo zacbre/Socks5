@@ -11,8 +11,9 @@ namespace socks5.Plugin
         public static bool LoadPluginsFromDisk { get; set; }
         //load plugin staticly.
         public static List<object> Plugins = new List<object>();
-        private static void LoadPlugins()
+        public static void LoadPlugins()
         {
+            if (loaded) return;
             try
             {
                 foreach (Type f in Assembly.GetExecutingAssembly().GetTypes())
@@ -80,17 +81,16 @@ namespace socks5.Plugin
             foreach(Type x in pluginTypes)
             {
                 if (x.IsAssignableFrom(p) && p != x)
-                    continue;
+                    return false;
                 else
-                    return true;
+                    continue;
             }
-            return false;
+            return true;
         }
         static bool loaded = false;
         public static List<object> LoadPlugin(Type assemblytype)
         {
             //make sure plugins are loaded.
-            if (!loaded) LoadPlugins();
             List<object> list = new List<object>();
             foreach (object x in Plugins)
             {
