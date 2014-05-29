@@ -67,6 +67,20 @@ namespace socks5
         void _server_onClientConnected(object sender, ClientEventArgs e)
         {
             //Console.WriteLine("Client connected.");
+            //call plugins related to ClientConnectedHandler.
+            foreach (ClientConnectedHandler cch in PluginLoader.LoadPlugin(typeof(ClientConnectedHandler)))
+                if (cch.Enabled)               
+                    try
+                    {
+                        if (!cch.OnConnect(e.Client, (IPEndPoint)e.Client.Sock.RemoteEndPoint))
+                        {
+                            e.Client.Disconnect();
+                            return;
+                        }
+                    }
+                    catch
+                    {
+                    }
             SocksClient client = new SocksClient(e.Client);
             client.Client.onDataReceived += Client_onDataSent;
             client.Client.onDataSent += Client_onDataReceived;

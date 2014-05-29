@@ -10,7 +10,7 @@ namespace socks5.Plugin
     {
         public static bool LoadPluginsFromDisk { get; set; }
         //load plugin staticly.
-        public static List<object> Plugins = new List<object>();
+        private static List<object> Plugins = new List<object>();
         public static void LoadPlugins()
         {
             if (loaded) return;
