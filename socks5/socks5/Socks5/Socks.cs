@@ -138,7 +138,10 @@ namespace socks5.Socks5
                 {
                     try
                     {
-                        return Dns.GetHostAddresses(Address)[0];
+                        foreach (IPAddress p in Dns.GetHostAddresses(Address))
+                            if (p.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                                return p;
+                        return null;
                     }
                     catch
                     {

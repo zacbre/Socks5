@@ -43,14 +43,22 @@ namespace socks5.TCP
 
         void AcceptClient(IAsyncResult res)
         {
-            TcpListener px = (TcpListener)res.AsyncState;
-            Socket x = px.EndAcceptSocket(res);
-            Task.Set();
-            Client f = new Client(x, PacketSize);
-            f.onClientDisconnected += onClientDisconnected;
-            f.onDataReceived += onDataReceived;
-            f.onDataSent += onDataSent;
-            onClientConnected(this, new ClientEventArgs(f));
+            try
+            {
+                TcpListener px = (TcpListener)res.AsyncState;
+                Socket x = px.EndAcceptSocket(res);
+                Task.Set();
+                Client f = new Client(x, PacketSize);
+                f.onClientDisconnected += onClientDisconnected;
+                f.onDataReceived += onDataReceived;
+                f.onDataSent += onDataSent;
+                onClientConnected(this, new ClientEventArgs(f));
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                //server stopped or client errored?
+            }
          }
 
         public void Start()

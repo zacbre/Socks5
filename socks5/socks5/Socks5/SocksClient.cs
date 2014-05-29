@@ -63,8 +63,9 @@ namespace socks5.TCP
                 Authenticated = true;
                 Client.Send(new byte[] { (byte)HeaderTypes.Socks5, (byte)HeaderTypes.Zero });
             }
+
             SocksRequest req = Socks.RequestTunnel(this);
-            if (req == null) { Client.Disconnect(); return; }
+            if (req == null) { Client.Disconnect(); Console.WriteLine("Disconnected Client."); return; }
             SocksRequest req1 = new SocksRequest(req.StreamType, req.Type, req.Address, req.Port);
             //call on plugins for connect callbacks.
             foreach (ConnectHandler conn in PluginLoader.LoadPlugin(typeof(ConnectHandler)))
@@ -78,6 +79,7 @@ namespace socks5.TCP
                         return;
                     }
             }
+
             //Send Tunnel Data back.
             SocksTunnel x = new SocksTunnel(this, req, req1, PacketSize, Timeout);
             x.Open();

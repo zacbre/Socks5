@@ -88,6 +88,7 @@ namespace socks5
 
         void RemoteClient_onClientDisconnected(object sender, ClientEventArgs e)
         {
+            Console.WriteLine("Remote DC'd");
             Client.Client.Disconnect();
         }
 

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace socks5.Plugin
 {
-    class PluginLoader
+    public class PluginLoader
     {
         public static bool LoadPluginsFromDisk { get; set; }
         //load plugin staticly.
@@ -16,31 +16,45 @@ namespace socks5.Plugin
             if (loaded) return;
             try
             {
-                foreach (Type f in Assembly.GetExecutingAssembly().GetTypes())
+                try
                 {
-                    try
+                    foreach (Type f in Assembly.GetExecutingAssembly().GetTypes())
                     {
-                        if (!CheckType(f))
+                        try
                         {
-                            object type = Activator.CreateInstance(f);
-                            Plugins.Push(type);
+                            if (!CheckType(f))
+                            {
+                                object type = Activator.CreateInstance(f);
+                                Plugins.Push(type);
+#if DEBUG
+                                Console.WriteLine("Loaded Embedded Plugin {0}.", f.FullName);
+#endif
+                            }
                         }
+                        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                     }
-                    catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                 }
-                foreach (Type f in Assembly.GetEntryAssembly().GetTypes())
+                catch { }
+                try
                 {
-                    try
+                    foreach (Type f in Assembly.GetEntryAssembly().GetTypes())
                     {
-                        if (!CheckType(f))
+                        try
                         {
-                            //Console.WriteLine("Loaded type {0}.", f.ToString());
-                            object type = Activator.CreateInstance(f);
-                            Plugins.Push(type);
+                            if (!CheckType(f))
+                            {
+                                //Console.WriteLine("Loaded type {0}.", f.ToString());
+                                object type = Activator.CreateInstance(f);
+                                Plugins.Push(type);
+#if DEBUG
+                                Console.WriteLine("Loaded Plugin {0}.", f.FullName);
+#endif
+                            }
                         }
+                        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                     }
-                    catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                 }
+                catch { }
                 //load plugins from disk?
                 if (LoadPluginsFromDisk)
                 {
@@ -74,6 +88,24 @@ namespace socks5.Plugin
                     Console.WriteLine(p.ToString());
             }
             loaded = true;
+        }
+        public static bool LoadCustomPlugin(Type f)
+        {
+            try
+            {
+                if (!CheckType(f))
+                {
+                    //Console.WriteLine("Loaded type {0}.", f.ToString());
+                    object type = Activator.CreateInstance(f);
+                    Plugins.Push(type);
+#if DEBUG
+                    Console.WriteLine("Loaded Plugin {0}.", f.FullName);
+#endif
+                    return true;
+                }
+            }
+            catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+            return false;
         }
         static List<Type> pluginTypes = new List<Type>(){ typeof(LoginHandler), typeof(DataHandler), typeof(ConnectHandler)};
         private static bool CheckType(Type p)
