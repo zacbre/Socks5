@@ -41,6 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExamplePlugins\ClientConnectHandlerExample.cs" />
+    <Compile Include="Examples\EnablePlugin.cs" />
+    <Compile Include="Examples\LoadCustomPlugin.cs" />
     <Compile Include="Plugin\ClientConnectedHandler.cs" />
     <Compile Include="Plugin\GenericPlugin.cs" />
     <Compile Include="SocksClient\Socks5Client.cs" />
