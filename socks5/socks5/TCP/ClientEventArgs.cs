@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
-
+using socks5.Socks;
 namespace socks5.TCP
 {
     public class ClientEventArgs : EventArgs

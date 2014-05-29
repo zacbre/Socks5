@@ -7,14 +7,14 @@ namespace socks5.ExamplePlugins
 {
     public class ConnectHandlerExample : ConnectHandler
     {
-        public override bool OnConnect(Socks5.SocksRequest Request)
+        public override bool OnConnect(Socks.SocksRequest Request)
         {
             //Compare data.
             if (Request.Address.Contains("74.125.224")) //Google.com IP
             {
                 Console.WriteLine("Redirecting traffic from {0} to yahoo.com.", Request.Address);
                 Request.Address = "www.yahoo.com";
-                Request.Type = Socks5.AddressType.Domain;
+                Request.Type = Socks.AddressType.Domain;
             }
             //Allow the connection.
             return true;

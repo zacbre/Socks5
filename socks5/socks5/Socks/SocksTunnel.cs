@@ -1,5 +1,5 @@
 ﻿using socks5.Plugin;
-using socks5.Socks5;
+using socks5.Socks;
 using socks5.TCP;
 using System;
 using System.Collections.Generic;

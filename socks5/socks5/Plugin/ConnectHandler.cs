@@ -1,4 +1,4 @@
-﻿using socks5.Socks5;
+﻿using socks5.Socks;
 using System;
 using System.Collections.Generic;
 using System.Text;

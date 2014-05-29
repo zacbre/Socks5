@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using socks5.Socks5;
 using socks5.Plugin;
 using System.Net;
-namespace socks5.TCP
+using socks5.TCP;
+namespace socks5.Socks
 {
     public class SocksClient
     {
@@ -20,7 +20,7 @@ namespace socks5.TCP
         public void Begin(int PacketSize, int Timeout)
         {
             Client.onClientDisconnected += Client_onClientDisconnected;
-            List<AuthTypes> authtypes = Socks.RequestAuth(this);
+            List<AuthTypes> authtypes = Socks5.RequestAuth(this);
             if (authtypes.Count <= 0)
             {
                 Client.Send(new byte[] { 0x00, 0xFF });
@@ -38,7 +38,7 @@ namespace socks5.TCP
                         return;
                     }
                     //request login.
-                    User user = Socks.RequestLogin(this);
+                    User user = Socks5.RequestLogin(this);
                     if (user == null)
                     {
                         Client.Disconnect();
@@ -65,7 +65,7 @@ namespace socks5.TCP
                 Client.Send(new byte[] { (byte)HeaderTypes.Socks5, (byte)HeaderTypes.Zero });
             }
 
-            SocksRequest req = Socks.RequestTunnel(this);
+            SocksRequest req = Socks5.RequestTunnel(this);
             if (req == null) { Client.Disconnect(); return; }
             SocksRequest req1 = new SocksRequest(req.StreamType, req.Type, req.Address, req.Port);
             //call on plugins for connect callbacks.

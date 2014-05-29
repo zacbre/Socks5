@@ -5,6 +5,7 @@ using socks5.TCP;
 using System.Net;
 using System.Threading;
 using socks5.Plugin;
+using socks5.Socks;
 namespace socks5
 {
     public class Socks5Server

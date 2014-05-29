@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
-namespace socks5.Socks5
+namespace socks5.Socks
 {
-    class Socks
+    class Socks5
     {
         public static List<AuthTypes> RequestAuth(SocksClient client)
         {

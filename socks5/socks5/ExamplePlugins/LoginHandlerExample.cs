@@ -1,4 +1,5 @@
 ﻿using socks5.Plugin;
+using socks5.Socks;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,7 +8,7 @@ namespace socks5.ExamplePlugins
 {
     public class LoginHandlerExample : LoginHandler
     {
-        public override LoginStatus HandleLogin(TCP.User user)
+        public override LoginStatus HandleLogin(User user)
         {
             return (user.Username == "thrdev" && user.Password == "testing1234" ? LoginStatus.Correct : LoginStatus.Denied);
         }

@@ -56,12 +56,12 @@
     <Compile Include="Plugin\DataHandler.cs" />
     <Compile Include="SocksServer\Socks5Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Socks5\Socks.cs" />
-    <Compile Include="Socks5\SocksTunnel.cs" />
+    <Compile Include="Socks\Socks.cs" />
+    <Compile Include="Socks\SocksTunnel.cs" />
     <Compile Include="TCP\Client.cs" />
     <Compile Include="TCP\ClientEventArgs.cs" />
     <Compile Include="TCP\DataEventArgs.cs" />
-    <Compile Include="Socks5\SocksClient.cs" />
+    <Compile Include="Socks\SocksClient.cs" />
     <Compile Include="TCP\Stats.cs" />
     <Compile Include="TCP\TcpServer.cs" />
   </ItemGroup>
