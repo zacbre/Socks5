@@ -5,7 +5,7 @@ using System.Text;
 
 namespace socks5.Plugin
 {
-    public abstract class ConnectHandler
+    public abstract class ConnectHandler : GenericPlugin
     {
         /// <summary>
         /// Handle request callback.
@@ -14,6 +14,6 @@ namespace socks5.Plugin
         /// <returns>Return true to allow the connection, return false to deny it.</returns>
         public abstract bool OnConnect(SocksRequest Request);
 
-        public abstract bool Enabled { get; }
+        public abstract bool Enabled { get; set; }
     }
 }

@@ -25,9 +25,11 @@ namespace Socks5Test
             
         }
 
+        private bool enabled = false;
         public override bool Enabled
         {
-            get { return false; }
+            get { return enabled; }
+            set { enabled = value; }
         }
     }
 }

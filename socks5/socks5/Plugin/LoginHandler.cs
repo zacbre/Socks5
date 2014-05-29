@@ -10,10 +10,9 @@ namespace socks5.Plugin
         Denied = 0xFF,
         Correct = 0x00
     }
-    public abstract class LoginHandler
+    public abstract class LoginHandler : GenericPlugin
     {
         public abstract LoginStatus HandleLogin(User user);
-        public abstract bool LoginRequired { get; }
-        public abstract bool Enabled { get; }
+        public abstract bool Enabled { get; set; }
     }
 }

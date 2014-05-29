@@ -5,7 +5,7 @@ using System.Text;
 
 namespace socks5.ExamplePlugins
 {
-    class DataHandlerExample : DataHandler
+    public class DataHandlerExample : DataHandler
     {
         private string httpString = "HTTP/1.1";
 
@@ -32,9 +32,11 @@ namespace socks5.ExamplePlugins
             //
         }
 
+        private bool enabled = false;
         public override bool Enabled
         {
-            get { return false; }
+            get { return enabled; }
+            set { enabled = value; }
         }
     }
 }

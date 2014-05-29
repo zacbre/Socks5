@@ -4,6 +4,8 @@ using System.Text;
 using socks5;
 using System.Net;
 using System.Threading;
+using socks5.Plugin;
+using socks5.ExamplePlugins;
 namespace Socks5Test
 {
     class Program
@@ -14,6 +16,16 @@ namespace Socks5Test
             x.onDataReceived += x_onDataReceived;
             x.onDataSent += x_onDataSent;
             x.Start();
+            //enable plugin.
+            foreach (object p in PluginLoader.GetPlugins)
+            {
+                if (p.GetType() == typeof(LoginHandlerExample))
+                {
+                    //enable it.
+                    PluginLoader.ChangePluginStatus(true, p.GetType());
+                    Console.WriteLine("Enabled {0}.", p.GetType().ToString());
+                }
+            }
             //Start showing network stats.
             while (true)
             {

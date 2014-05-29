@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using socks5.Socks5;
 using socks5.Plugin;
+using System.Net;
 namespace socks5.TCP
 {
     public class SocksClient
@@ -28,7 +29,7 @@ namespace socks5.TCP
             }
             foreach (LoginHandler lh in PluginLoader.LoadPlugin(typeof(LoginHandler)))
             {
-                if (lh.LoginRequired)
+                if (lh.Enabled)
                 {
                     if(!authtypes.Contains(AuthTypes.Login)) //disconnect.
                     {
@@ -94,10 +95,12 @@ namespace socks5.TCP
     {
         public string Username { get; private set; }
         public string Password { get; private set; }
-        public User(string un, string pw)
+        public IPEndPoint IP { get; private set; }
+        public User(string un, string pw, IPEndPoint ip)
         {
             Username = un;
             Password = pw;
+            IP = ip;
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace socks5.Plugin
 {
-    public abstract class DataHandler
+    public abstract class DataHandler : GenericPlugin
     {
         /// <summary>
         /// Allows you to grab data before it's sent to the end user.
@@ -21,6 +21,6 @@ namespace socks5.Plugin
         /// <param name="e"></param>
         public abstract void OnDataSent(object sender, DataEventArgs e);
 
-        public abstract bool Enabled { get; }
+        public abstract bool Enabled { get; set; }
     }
 }

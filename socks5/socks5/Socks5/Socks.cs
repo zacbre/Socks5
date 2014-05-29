@@ -44,7 +44,7 @@ namespace socks5.Socks5
             string username = Encoding.ASCII.GetString(buff, 2, numusername);
             string password = Encoding.ASCII.GetString(buff, numusername + 3, numpassword);
 
-            return new User(username, password);
+            return new User(username, password, (IPEndPoint)client.Client.Sock.RemoteEndPoint);
         }
 
         public static SocksRequest RequestTunnel(SocksClient client)

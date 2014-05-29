@@ -5,21 +5,18 @@ using System.Text;
 
 namespace socks5.ExamplePlugins
 {
-    class LoginHandlerExample : LoginHandler
+    public class LoginHandlerExample : LoginHandler
     {
         public override LoginStatus HandleLogin(TCP.User user)
         {
             return (user.Username == "thrdev" && user.Password == "testing1234" ? LoginStatus.Correct : LoginStatus.Denied);
         }
 
-        public override bool LoginRequired
+        private bool enabled = false;
+        public override bool Enabled
         {
-            get { return false; }
-        }
-
-        public override bool Enabled 
-        {
-            get { return false; }
+            get { return enabled; }
+            set { enabled = value; }
         }
     }
 }

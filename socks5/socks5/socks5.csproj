@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Plugin\ClientConnectedHandler.cs" />
+    <Compile Include="Plugin\GenericPlugin.cs" />
     <Compile Include="SocksClient\Socks5Client.cs" />
     <Compile Include="TCP\BandwidthCounter.cs" />
     <Compile Include="ExamplePlugins\ConnectHandlerExample.cs" />

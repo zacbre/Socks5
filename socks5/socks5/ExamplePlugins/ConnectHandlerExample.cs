@@ -5,7 +5,7 @@ using System.Text;
 
 namespace socks5.ExamplePlugins
 {
-    class ConnectHandlerExample : ConnectHandler
+    public class ConnectHandlerExample : ConnectHandler
     {
         public override bool OnConnect(Socks5.SocksRequest Request)
         {
@@ -19,10 +19,11 @@ namespace socks5.ExamplePlugins
             //Allow the connection.
             return true;
         }
-
+        private bool enabled = false;
         public override bool Enabled
         {
-            get { return false; }
+            get { return enabled; }
+            set { enabled = value; }
         }
     }
 }
