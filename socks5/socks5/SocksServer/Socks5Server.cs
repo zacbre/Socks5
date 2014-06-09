@@ -30,8 +30,6 @@ namespace socks5
             Timeout = 1000;
             PacketSize = 128;
             LoadPluginsFromDisk = false;
-            //load plugins.
-            PluginLoader.LoadPlugins();            
             Stats = new Stats();
             _server = new TcpServer(ip, port);
             _server.onClientConnected += _server_onClientConnected;
@@ -41,6 +39,8 @@ namespace socks5
         {
             if (started) return;
             Plugin.PluginLoader.LoadPluginsFromDisk = LoadPluginsFromDisk;
+            //load plugins.
+            PluginLoader.LoadPlugins(); 
             _server.PacketSize = PacketSize;
             _server.Start();
             started = true;
