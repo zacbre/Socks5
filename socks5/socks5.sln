@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "socks5", "socks5\socks5.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Socks5Test", "Socks5Test\Socks5Test.csproj", "{838E506D-EFE1-4B1E-B7F3-2302FAAD58A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "socks5_minimal", "socks5_minimal\socks5_minimal.csproj", "{7E2758A8-4E3B-4AC9-9FA2-0F9FDD3E478B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Socks5_Minimal_Test", "Socks5_Minimal_Test\Socks5_Minimal_Test.csproj", "{DAD68EDE-71F5-4109-9817-55B89BD3B847}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{838E506D-EFE1-4B1E-B7F3-2302FAAD58A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{838E506D-EFE1-4B1E-B7F3-2302FAAD58A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{838E506D-EFE1-4B1E-B7F3-2302FAAD58A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E2758A8-4E3B-4AC9-9FA2-0F9FDD3E478B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E2758A8-4E3B-4AC9-9FA2-0F9FDD3E478B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E2758A8-4E3B-4AC9-9FA2-0F9FDD3E478B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E2758A8-4E3B-4AC9-9FA2-0F9FDD3E478B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAD68EDE-71F5-4109-9817-55B89BD3B847}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAD68EDE-71F5-4109-9817-55B89BD3B847}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAD68EDE-71F5-4109-9817-55B89BD3B847}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAD68EDE-71F5-4109-9817-55B89BD3B847}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -16,7 +16,8 @@ namespace socks5.Socks
         {
             Client = cli;
         }
-
+        private SocksRequest req1;
+        public SocksRequest Destination { get { return req1; } }
         public void Begin(int PacketSize, int Timeout)
         {
             Client.onClientDisconnected += Client_onClientDisconnected;
@@ -67,7 +68,7 @@ namespace socks5.Socks
 
             SocksRequest req = Socks5.RequestTunnel(this);
             if (req == null) { Client.Disconnect(); return; }
-            SocksRequest req1 = new SocksRequest(req.StreamType, req.Type, req.Address, req.Port);
+            req1 = new SocksRequest(req.StreamType, req.Type, req.Address, req.Port);
             //call on plugins for connect callbacks.
             foreach (ConnectHandler conn in PluginLoader.LoadPlugin(typeof(ConnectHandler)))
             {
