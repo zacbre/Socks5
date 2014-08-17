@@ -12,7 +12,7 @@ namespace socks5.ExamplePlugins
         {
             return (user.Username == "thrdev" && user.Password == "testing1234" ? LoginStatus.Correct : LoginStatus.Denied);
         }
-
+        //Username/Password Table? Endless possiblities for the login system.
         private bool enabled = false;
         public override bool Enabled
         {

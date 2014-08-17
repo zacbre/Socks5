@@ -20,7 +20,7 @@ namespace socks5.ExamplePlugins
                 //replace between these two values.
                 if (EndHTTP != -1)
                 {
-                    e.Buffer = e.Buffer.ReplaceBetween(Location, EndHTTP, Encoding.ASCII.GetBytes("HTTP/0.1"));
+                    e.Buffer = e.Buffer.ReplaceBetween(Location, EndHTTP, Encoding.ASCII.GetBytes("HTTP/1.0"));
                     Console.WriteLine(Encoding.ASCII.GetString(e.Buffer, 0, e.Count));
                     //convert sender.
                 }

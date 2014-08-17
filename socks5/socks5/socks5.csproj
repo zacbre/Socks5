@@ -43,7 +43,10 @@
     <Compile Include="ExamplePlugins\ClientConnectHandlerExample.cs" />
     <Compile Include="Plugin\ClientConnectedHandler.cs" />
     <Compile Include="Plugin\GenericPlugin.cs" />
-    <Compile Include="SocksClient\Socks5Client.cs" />
+    <Compile Include="Socks5Client\Events\SocksClientArgs.cs" />
+    <Compile Include="Socks5Client\Socks.cs" />
+    <Compile Include="Socks5Client\Socks5Client.cs" />
+    <Compile Include="Socks5Client\Events\SocksClientDataArgs.cs" />
     <Compile Include="TCP\BandwidthCounter.cs" />
     <Compile Include="ExamplePlugins\ConnectHandlerExample.cs" />
     <Compile Include="Extensions.cs" />

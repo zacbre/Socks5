@@ -5,6 +5,7 @@ using System.Text;
 using socks5;
 namespace socks5.HTTP
 {
+    //WARNING: BETA - Doesn't work as well as intended. Use at your own discretion.
     public class Chunked
     {
         private byte[] totalbuff;

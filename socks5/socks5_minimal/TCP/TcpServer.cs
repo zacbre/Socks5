@@ -71,6 +71,7 @@ namespace socks5.TCP
             {
                 accept = false;
                 p.Stop();
+                Task.Set();
             }
         }
     }

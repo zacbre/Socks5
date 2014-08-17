@@ -53,6 +53,7 @@ namespace socks5
 
         public static int FindString(this byte[] src, string tofind, int startIndex = 0)
         {
+            if (startIndex < 0) return -1;
             int index = -1;
             int matchIndex = 0;
             // handle the complete source array
@@ -146,7 +147,7 @@ namespace socks5
             byte[] dst = null;
             //locate both.
             int index = src.FindString(start);
-            int index1 = src.FindString(end);
+            int index1 = src.FindString(end, index);
             if(index > -1 && index1 > -1)
             {
                 dst = new byte[src.Length - (index - index1) + replacement.Length];

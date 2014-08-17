@@ -16,7 +16,7 @@ namespace socks5
         public Client RemoteClient;
 
         private int Timeout = 10000;
-        private int PacketSize = 128;
+        private int PacketSize = 2048;
 
         public SocksTunnel(SocksClient p, SocksRequest req, int packetSize, int timeout)
         {

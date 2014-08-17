@@ -89,6 +89,7 @@ namespace socks5.Plugin
             }
             loaded = true;
         }
+
         public static bool LoadCustomPlugin(Type f)
         {
             try
@@ -107,7 +108,9 @@ namespace socks5.Plugin
             catch (Exception ex) { Console.WriteLine(ex.ToString()); }
             return false;
         }
+
         static List<Type> pluginTypes = new List<Type>(){ typeof(LoginHandler), typeof(DataHandler), typeof(ConnectHandler), typeof(ClientConnectedHandler) };
+
         private static bool CheckType(Type p)
         {
             foreach(Type x in pluginTypes)
@@ -119,7 +122,9 @@ namespace socks5.Plugin
             }
             return true;
         }
+
         static bool loaded = false;
+
         public static List<object> LoadPlugin(Type assemblytype)
         {
             //make sure plugins are loaded.
@@ -133,10 +138,12 @@ namespace socks5.Plugin
             }
             return list;
         }
+
         public static List<object> GetPlugins
         {
             get { return Plugins; }
         }
+
         public static void ChangePluginStatus(bool Enabled, Type pluginType)
         {
             foreach (object x in Plugins)

@@ -13,7 +13,6 @@ namespace socks5.Plugin
         /// <param name="Request"></param>
         /// <returns>Return true to allow the connection, return false to deny it.</returns>
         public abstract bool OnConnect(SocksRequest Request);
-
         public abstract bool Enabled { get; set; }
     }
 }

@@ -155,10 +155,15 @@ namespace socks5.Socks
                 }
             }
         }
-        public byte[] GetData()
+        public byte[] GetData(bool NetworkToHostOrder)
         {
             byte[] data;
-            var port = IPAddress.NetworkToHostOrder(Port);
+            var port = 0;
+            if(NetworkToHostOrder)
+                port = IPAddress.NetworkToHostOrder(Port);
+            else
+                port = IPAddress.HostToNetworkOrder(Convert.ToInt16(Port));
+            
             if (Type == AddressType.IP)
             {
                 data = new byte[10];
@@ -220,6 +225,7 @@ namespace socks5.Socks
         Refused = 0x05,
         Expired = 0x06,
         NotSupported = 0x07,
-        AddressNotSupported = 0x08
+        AddressNotSupported = 0x08,
+        LoginRequired = 0x90
     }
 }

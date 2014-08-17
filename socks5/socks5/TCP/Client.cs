@@ -14,12 +14,14 @@ namespace socks5.TCP
 
         public Socket Sock { get; set; }
         private byte[] buffer;
+        private int packetSize = 65535;
         public Client(Socket sock, int PacketSize)
         {
             //start the data exchange.
             Sock = sock;
             onClientDisconnected = delegate { };
             buffer = new byte[PacketSize];
+            packetSize = PacketSize;
         }
 
         private void DataReceived(IAsyncResult res)
@@ -37,7 +39,7 @@ namespace socks5.TCP
                 DataEventArgs data = new DataEventArgs(this, buffer, received);
                 this.onDataReceived(this, data);
             }
-            catch
+            catch(Exception ex)
             {
                 this.Disconnect();
             }

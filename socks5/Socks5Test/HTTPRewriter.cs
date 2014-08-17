@@ -9,15 +9,11 @@ namespace Socks5Test
     {
         public override void OnDataReceived(object sender, socks5.TCP.DataEventArgs e)
         {
-            if (e.Buffer.FindString("HTTP/1.") != -1 && e.Buffer.FindString("\r\n\r\n") != -1)
-            {
+            if (e.Buffer.FindString("HTTP/1.") != -1 && e.Buffer.FindString("\r\n") != -1)
+            {  
                 e.Buffer = e.Buffer.ReplaceString("\r\n", "\r\nX-Served-By: Socks5Server\r\n");
                 e.Count = e.Count + "X-Served-By: Socks5Server\r\n".Length;
             }
-            //get chunked.
-            Chunked c = new Chunked(e.Client.Sock, e.Buffer, e.Count);
-            e.Buffer = c.ChunkedData;
-            e.Count = c.ChunkedData.Length;
         }
 
         public override void OnDataSent(object sender, socks5.TCP.DataEventArgs e)
@@ -25,7 +21,7 @@ namespace Socks5Test
             
         }
 
-        private bool enabled = false;
+        private bool enabled = true;
         public override bool Enabled
         {
             get { return enabled; }

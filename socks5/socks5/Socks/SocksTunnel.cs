@@ -35,7 +35,9 @@ namespace socks5
         public void Open()
         {
             if (ModifiedReq.Address == null || ModifiedReq.Port <= -1) { Client.Client.Disconnect(); return; }
-            //Console.WriteLine("{0}:{1}", ModifiedReq.Address, ModifiedReq.Port);
+#if DEBUG
+            Console.WriteLine("{0}:{1}", ModifiedReq.Address, ModifiedReq.Port);
+#endif
             var socketArgs = new SocketAsyncEventArgs { RemoteEndPoint = new IPEndPoint(ModifiedReq.IP, ModifiedReq.Port) };
             socketArgs.Completed += socketArgs_Completed;
             RemoteClient.Sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -45,7 +47,7 @@ namespace socks5
 
         void socketArgs_Completed(object sender, SocketAsyncEventArgs e)
         {
-            byte[] request = Req.GetData(); // Client.Client.Send(Req.GetData());
+            byte[] request = Req.GetData(true); // Client.Client.Send(Req.GetData());
             if (e.SocketError != SocketError.Success)
             {
                 Console.WriteLine("Error while connecting: {0}", e.SocketError.ToString());
@@ -88,7 +90,9 @@ namespace socks5
 
         void RemoteClient_onClientDisconnected(object sender, ClientEventArgs e)
         {
+#if DEBUG
             Console.WriteLine("Remote DC'd");
+#endif
             Client.Client.Disconnect();
         }
 
