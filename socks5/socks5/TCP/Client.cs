@@ -66,7 +66,14 @@ namespace socks5.TCP
 
         public void ReceiveAsync()
         {
-            Sock.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(DataReceived), Sock);
+            try
+            {
+                Sock.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(DataReceived), Sock);
+            }
+            catch
+            {
+                this.Disconnect();
+            }
         }
 
 

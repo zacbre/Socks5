@@ -11,7 +11,7 @@ namespace socks5.ExamplePlugins
 
         public override void OnDataReceived(object sender, TCP.DataEventArgs e)
         {
-            //Modify data.
+            /*//Modify data.
             int Location = e.Buffer.FindString(httpString);
             if (Location != -1)
             {
@@ -24,12 +24,12 @@ namespace socks5.ExamplePlugins
                     Console.WriteLine(Encoding.ASCII.GetString(e.Buffer, 0, e.Count));
                     //convert sender.
                 }
-            }
+            }*/
         }
 
         public override void OnDataSent(object sender, TCP.DataEventArgs e)
         {
-            //
+            Console.WriteLine(Encoding.ASCII.GetString(e.Buffer, e.Offset, e.Count));
         }
 
         private bool enabled = false;
