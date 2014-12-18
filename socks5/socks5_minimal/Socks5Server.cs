@@ -12,9 +12,12 @@ namespace socks5
         public int Timeout { get; set; }
         public int PacketSize { get; set; }
         public bool LoadPluginsFromDisk { get; set; }
+        public bool Authentication { get { return Authenticate; } set { Authenticate = value; } }
+
+        public event SocksClient.Authenticate OnAuthentication = null;
 
         public TcpServer _server;
-        private Thread NetworkStats;
+        private bool Authenticate = false;
 
         public List<SocksClient> Clients = new List<SocksClient>();
         
@@ -22,30 +25,30 @@ namespace socks5
 
         public Socks5Server(IPAddress ip, int port)
         {
-            Timeout = 1000;
-            PacketSize = 128;
-            _server = new TcpServer(ip, port);
-            _server.onClientConnected += _server_onClientConnected;
+            this.Timeout = 1000;
+            this.PacketSize = 128;
+            this._server = new TcpServer(ip, port);
+            this._server.onClientConnected += _server_onClientConnected;
         }
 
         public void Start()
         {
-            if (started) return;
-            _server.PacketSize = PacketSize;
-            _server.Start();
-            started = true;
+            if (this.started) return;
+            this._server.PacketSize = PacketSize;
+            this._server.Start();
+            this.started = true;
         }
 
         public void Stop()
         {
             if (!started) return;
-            _server.Stop();
-            for (int i = 0; i < Clients.Count; i++)
+            this._server.Stop();
+            for (int i = 0; i < this.Clients.Count; i++)
             {
-                Clients[i].Client.Disconnect();
+                this.Clients[i].Client.Disconnect();
             }
-            Clients.Clear();
-            started = false;
+            this.Clients.Clear();
+            this.started = false;
         }
 
         void _server_onClientConnected(object sender, ClientEventArgs e)
@@ -53,8 +56,22 @@ namespace socks5
             //Console.WriteLine("Client connected.");
             SocksClient client = new SocksClient(e.Client);
             client.onClientDisconnected += client_onClientDisconnected;
+            client.OnClientAuthenticating += client_OnClientAuthenticating;
             Clients.Add(client);
+            client.Authentication = this.Authentication;
             client.Begin(this.PacketSize, this.Timeout);
+        }
+
+        LoginStatus client_OnClientAuthenticating(object sender, SocksAuthenticationEventArgs e)
+        {
+            if (this.Authenticate)
+            {
+                return OnAuthentication(sender, e);
+            }
+            else
+            {
+                return LoginStatus.Correct;
+            }
         }
 
         void client_onClientDisconnected(object sender, SocksClientEventArgs e)

@@ -10,7 +10,16 @@ namespace Socks5_Minimal_Test
         static void Main(string[] args)
         {
             Socks5Server f = new Socks5Server(IPAddress.Any, 1080);
+            f.Authentication = true;
+            f.OnAuthentication += f_OnAuthentication;
             f.Start();
+        }
+
+        static socks5.Socks.LoginStatus f_OnAuthentication(object sender, socks5.TCP.SocksAuthenticationEventArgs e)
+        {
+            if(e.User.Username == "Thr" && e.User.Password == "test")
+                return socks5.Socks.LoginStatus.Correct;
+            return socks5.Socks.LoginStatus.Denied;
         }
     }
 }

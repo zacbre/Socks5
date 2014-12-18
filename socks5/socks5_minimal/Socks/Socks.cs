@@ -87,7 +87,6 @@ namespace socks5.Socks
                         port = (port < 1 ? port + 65536 : port);
                         return new SocksRequest(StreamTypes.Stream, (AddressType)buff[3], address, port);
                     }
-                    break;
                 default:
                     //not supported.
                     return null;

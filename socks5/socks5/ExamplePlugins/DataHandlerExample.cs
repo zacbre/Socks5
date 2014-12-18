@@ -7,7 +7,7 @@ namespace socks5.ExamplePlugins
 {
     public class DataHandlerExample : DataHandler
     {
-        private string httpString = "HTTP/1.1";
+        //private string httpString = "HTTP/1.1";
 
         public override void OnDataReceived(object sender, TCP.DataEventArgs e)
         {

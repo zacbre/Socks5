@@ -21,4 +21,13 @@ namespace socks5.TCP
             Client = client;
         }
     }
+
+    public class SocksAuthenticationEventArgs : EventArgs
+    {
+        public User User { get; private set; }
+        public SocksAuthenticationEventArgs(User loginInfo)
+        {
+            User = loginInfo;
+        }
+    }
 }

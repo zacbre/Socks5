@@ -39,7 +39,7 @@ namespace socks5.TCP
                 DataEventArgs data = new DataEventArgs(this, buffer, received);
                 this.onDataReceived(this, data);
             }
-            catch(Exception ex)
+            catch
             {
                 this.Disconnect();
             }
