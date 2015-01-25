@@ -17,7 +17,7 @@ namespace Socks5_Minimal_Test
 
         static socks5.Socks.LoginStatus f_OnAuthentication(object sender, socks5.TCP.SocksAuthenticationEventArgs e)
         {
-            if(e.User.Username == "Thr" && e.User.Password == "test")
+            if(e.User.Username == "Thr" && e.User.Password == "testUser")
                 return socks5.Socks.LoginStatus.Correct;
             return socks5.Socks.LoginStatus.Denied;
         }

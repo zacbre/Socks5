@@ -43,6 +43,7 @@
     <Compile Include="ExamplePlugins\ClientConnectHandlerExample.cs" />
     <Compile Include="Plugin\ClientConnectedHandler.cs" />
     <Compile Include="Plugin\GenericPlugin.cs" />
+    <Compile Include="Plugin\ConnectSocketOverrideHandler.cs" />
     <Compile Include="Socks5Client\Events\SocksClientArgs.cs" />
     <Compile Include="Socks5Client\Socks.cs" />
     <Compile Include="Socks5Client\Socks5Client.cs" />

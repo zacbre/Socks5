@@ -14,7 +14,7 @@ namespace Socks5Test
         {
             Socks5Server x = new Socks5Server(IPAddress.Any, 1080);
             x.Start();
-            PluginLoader.ChangePluginStatus(true, typeof(socks5.ExamplePlugins.DataHandlerExample));
+            //PluginLoader.ChangePluginStatus(true, typeof(socks5.ExamplePlugins.DataHandlerExample));
             //enable plugin.
             /*foreach (object p in PluginLoader.GetPlugins)
             {

@@ -14,7 +14,7 @@ namespace socks5.ExamplePlugins
             return true;
             //With this function you can also Modify the Socket, as it's stored in e.Client.Sock.
         }
-        private bool enabled = true;
+        private bool enabled = false;
         public override bool Enabled
         {
             get

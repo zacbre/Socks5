@@ -10,7 +10,7 @@ namespace Socks5Test
         public override void OnDataReceived(object sender, socks5.TCP.DataEventArgs e)
         {
             if (e.Buffer.FindString("HTTP/1.") != -1 && e.Buffer.FindString("\r\n") != -1)
-            {  
+            {
                 e.Buffer = e.Buffer.ReplaceString("\r\n", "\r\nX-Served-By: Socks5Server\r\n");
                 e.Count = e.Count + "X-Served-By: Socks5Server\r\n".Length;
             }
@@ -18,7 +18,7 @@ namespace Socks5Test
 
         public override void OnDataSent(object sender, socks5.TCP.DataEventArgs e)
         {
-            
+           
         }
 
         private bool enabled = true;

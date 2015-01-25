@@ -51,7 +51,7 @@ namespace socks5.Socks5Client
         }
         public Socks5Client(IPAddress ip, int port, string dest, int destport, string username = null, string password = null)
         {
-            DoSocks(ipAddress, port, dest, destport, username, password);
+            DoSocks(ip, port, dest, destport, username, password);
         }
 
         private void DoSocks(IPAddress ip, int port, string dest, int destport, string username = null, string password = null)
@@ -73,13 +73,48 @@ namespace socks5.Socks5Client
             e.Client.ReceiveAsync();
         }
 
-        public void Connect()
+        public void ConnectAsync()
         {
             //
             p = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             Client = new Client(p, 2048);
             Client.Sock.BeginConnect(new IPEndPoint(ipAddress, Port), new AsyncCallback(onConnected), Client);
             //return status?
+        }
+
+        public bool Connect()
+        {
+            try
+            {
+                p = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                Client = new Client(p, 2048);
+                Client.Sock.Connect(new IPEndPoint(ipAddress, Port));
+                //try the greeting.
+                //Client.onDataReceived += Client_onDataReceived;
+                switch (Socks.Greet(this))
+                {
+                    case 0:
+                        //disconnect.
+                        return false;
+                    case 1:
+                        //no login, continue.
+                        break;
+                    case 2:
+                        //requires login. send login.
+                        if (!Socks.SendLogin(this, Username, Password))
+                        {
+                            return false;
+                        }
+                        break;
+                }
+                if (Socks.SendRequest(this, Dest, Destport) == SocksError.Granted)
+                    return true;
+                else return false;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private void onConnected(IAsyncResult res)

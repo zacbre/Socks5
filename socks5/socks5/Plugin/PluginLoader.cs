@@ -109,7 +109,7 @@ namespace socks5.Plugin
             return false;
         }
 
-        static List<Type> pluginTypes = new List<Type>(){ typeof(LoginHandler), typeof(DataHandler), typeof(ConnectHandler), typeof(ClientConnectedHandler) };
+        static List<Type> pluginTypes = new List<Type>(){ typeof(LoginHandler), typeof(DataHandler), typeof(ConnectHandler), typeof(ClientConnectedHandler), typeof(ConnectSocketOverrideHandler) };
 
         private static bool CheckType(Type p)
         {

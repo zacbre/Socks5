@@ -38,6 +38,26 @@ namespace socks5
 #if DEBUG
             Console.WriteLine("{0}:{1}", ModifiedReq.Address, ModifiedReq.Port);
 #endif
+            foreach (ConnectSocketOverrideHandler conn in PluginLoader.LoadPlugin(typeof(ConnectSocketOverrideHandler)))
+            if(conn.Enabled)
+            {
+                Client pm = conn.OnConnectOverride(ModifiedReq);
+                if (pm != null)
+                {
+                    //check if it's connected.
+                    if (pm.Sock.Connected)
+                    {
+                        RemoteClient = pm;
+                        //send request right here.
+                        byte[] shit = Req.GetData(true);
+                        shit[1] = 0x00;
+                        //gucci let's go.
+                        Client.Client.Send(shit);
+                        ConnectHandler(null);
+                        return;
+                    }
+                }
+            }
             var socketArgs = new SocketAsyncEventArgs { RemoteEndPoint = new IPEndPoint(ModifiedReq.IP, ModifiedReq.Port) };
             socketArgs.Completed += socketArgs_Completed;
             RemoteClient.Sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
