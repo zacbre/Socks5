@@ -100,6 +100,7 @@ namespace socks5
                 Client.Client.onDataReceived += Client_onDataReceived;
                 RemoteClient.onDataReceived += RemoteClient_onDataReceived;
                 RemoteClient.onClientDisconnected += RemoteClient_onClientDisconnected;
+                Client.Client.onClientDisconnected += Client_onClientDisconnected;
                 Client.Client.ReceiveAsync();
                 RemoteClient.ReceiveAsync();
             }
@@ -107,13 +108,23 @@ namespace socks5
             {
             }
         }
+        bool disconnected = false;
+        void Client_onClientDisconnected(object sender, ClientEventArgs e)
+        {
+            if (disconnected) return;
+            disconnected = true;
+            RemoteClient.Disconnect();
+        }
 
         void RemoteClient_onClientDisconnected(object sender, ClientEventArgs e)
         {
 #if DEBUG
             Console.WriteLine("Remote DC'd");
 #endif
+            if (disconnected) return;
+            disconnected = true;
             Client.Client.Disconnect();
+            disconnected = true;
         }
 
         void RemoteClient_onDataReceived(object sender, DataEventArgs e)
