@@ -2,6 +2,7 @@
 using socks5.Socks;
 using socks5.TCP;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
@@ -20,7 +21,7 @@ namespace socks5
         private List<DataHandler> Plugins = new List<DataHandler>();
 
         private int Timeout = 10000;
-        private int PacketSize = 128;
+        private int PacketSize = 65535;
 
         public SocksTunnel(SocksClient p, SocksRequest req, SocksRequest req1, int packetSize, int timeout)
         {
@@ -101,30 +102,34 @@ namespace socks5
                 RemoteClient.onDataReceived += RemoteClient_onDataReceived;
                 RemoteClient.onClientDisconnected += RemoteClient_onClientDisconnected;
                 Client.Client.onClientDisconnected += Client_onClientDisconnected;
-                Client.Client.ReceiveAsync();
                 RemoteClient.ReceiveAsync();
+                Client.Client.ReceiveAsync();
             }
             catch
             {
+                RemoteClient.Disconnect();
+                Client.Client.Disconnect();
             }
         }
         bool disconnected = false;
         void Client_onClientDisconnected(object sender, ClientEventArgs e)
         {
             if (disconnected) return;
+            //Console.WriteLine("Client DC'd");
             disconnected = true;
             RemoteClient.Disconnect();
         }
 
         void RemoteClient_onClientDisconnected(object sender, ClientEventArgs e)
         {
+            
 #if DEBUG
             Console.WriteLine("Remote DC'd");
 #endif
             if (disconnected) return;
+            //Console.WriteLine("Remote DC'd");
             disconnected = true;
             Client.Client.Disconnect();
-            disconnected = true;
         }
 
         void RemoteClient_onDataReceived(object sender, DataEventArgs e)
@@ -133,8 +138,11 @@ namespace socks5
             foreach (DataHandler f in Plugins)
                 if(f.Enabled)
                     f.OnDataReceived(this, e);
-            Client.Client.SendAsync(e.Buffer, e.Offset, e.Count);
-            RemoteClient.ReceiveAsync();
+            Client.Client.Send(e.Buffer, e.Offset, e.Count);
+            if (!RemoteClient.Receiving)
+                RemoteClient.ReceiveAsync();
+            if (!Client.Client.Receiving)
+                Client.Client.ReceiveAsync();
         }
 
         void Client_onDataReceived(object sender, DataEventArgs e)
@@ -143,8 +151,11 @@ namespace socks5
             foreach (DataHandler f in Plugins)
                 if(f.Enabled)
                     f.OnDataSent(this, e);
-            RemoteClient.SendAsync(e.Buffer, e.Offset, e.Count);
-            Client.Client.ReceiveAsync();
+            RemoteClient.Send(e.Buffer, e.Offset, e.Count);
+            if (!Client.Client.Receiving)
+                Client.Client.ReceiveAsync();
+            if (!RemoteClient.Receiving)
+                RemoteClient.ReceiveAsync();
         }
     }
 }

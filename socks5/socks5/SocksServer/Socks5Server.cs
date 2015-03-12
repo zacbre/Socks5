@@ -20,15 +20,12 @@ namespace socks5
         public List<SocksClient> Clients = new List<SocksClient>();
         public Stats Stats;
 
-        public event EventHandler<DataEventArgs> onDataReceived = delegate { };
-        public event EventHandler<DataEventArgs> onDataSent = delegate { };
-
         private bool started;
 
         public Socks5Server(IPAddress ip, int port)
         {
-            Timeout = 1000;
-            PacketSize = 2048;
+            Timeout = 5000;
+            PacketSize = 65535;
             LoadPluginsFromDisk = false;
             Stats = new Stats();
             _server = new TcpServer(ip, port);
@@ -87,8 +84,8 @@ namespace socks5
                     {
                     }
             SocksClient client = new SocksClient(e.Client);
-            client.Client.onDataReceived += Client_onDataSent;
-            client.Client.onDataSent += Client_onDataReceived;
+            e.Client.onDataReceived += Client_onDataReceived;
+            e.Client.onDataSent += Client_onDataSent;
             client.onClientDisconnected += client_onClientDisconnected;
             Clients.Add(client);
             client.Begin(this.PacketSize, this.Timeout);
@@ -97,8 +94,8 @@ namespace socks5
         void client_onClientDisconnected(object sender, SocksClientEventArgs e)
         {
             e.Client.onClientDisconnected -= client_onClientDisconnected;
-            e.Client.Client.onDataReceived -= onDataReceived;
-            e.Client.Client.onDataSent -= onDataSent;
+            e.Client.Client.onDataReceived -= Client_onDataReceived;
+            e.Client.Client.onDataSent -= Client_onDataSent;
             this.Clients.Remove(e.Client);
         }
 
@@ -106,14 +103,12 @@ namespace socks5
         {
             this.Stats.AddBytes(e.Count, ByteType.Sent);
             this.Stats.AddPacket(PacketType.Sent);
-            onDataSent(this, e);
         }
 
         void Client_onDataReceived(object sender, DataEventArgs e)
         {
             this.Stats.AddBytes(e.Count, ByteType.Received);
             this.Stats.AddPacket(PacketType.Received);
-            onDataReceived(this, e);
         }
     }
 }

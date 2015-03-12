@@ -6,15 +6,16 @@ using System.Net;
 using System.Threading;
 using socks5.Plugin;
 using socks5.ExamplePlugins;
+using socks5.Socks5Client;
 namespace Socks5Test
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Socks5Server x = new Socks5Server(IPAddress.Any, 1080);
+            Socks5Server x = new Socks5Server(IPAddress.Any, 1084);
             x.Start();
-            //PluginLoader.ChangePluginStatus(true, typeof(socks5.ExamplePlugins.DataHandlerExample));
+            PluginLoader.ChangePluginStatus(false, typeof(socks5.ExamplePlugins.DataHandlerExample));
             //enable plugin.
             /*foreach (object p in PluginLoader.GetPlugins)
             {
@@ -25,11 +26,10 @@ namespace Socks5Test
                     Console.WriteLine("Enabled {0}.", p.GetType().ToString());
                 }
             }*/
-            //socks5 client.
-            /*socks5.Socks5Client.Socks5Client cli = new socks5.Socks5Client.Socks5Client("localhost", 1080, "www.thrdu.de", 80, "thrdev", "testing1234");
-            cli.OnConnected += cli_OnConnected;
-            cli.Connect();*/
             //Start showing network stats.
+            //Socks5Client p = new Socks5Client("142.4.208.185", 3128, "unexposedihope.speedresolve.com", 9000); //"yolo", "swag");
+            //p.OnConnected += p_OnConnected;
+            //p.ConnectAsync();
             while (true)
             {
                 Console.Clear();
@@ -38,29 +38,27 @@ namespace Socks5Test
                 Thread.Sleep(1000);
             }
         }
-        static void cli_OnConnected(object sender, socks5.Socks5Client.Socks5ClientArgs e)
+        static byte[] m;
+        static void p_OnConnected(object sender, Socks5ClientArgs e)
         {
-            //Console.WriteLine("Connected to Socket! Status: {0}.", e.Status.ToString());
             if (e.Status == socks5.Socks.SocksError.Granted)
             {
-                e.Client.onDataReceived += Client_onDataReceived;
-                e.Client.onClientDisconnected += Client_onClientDisconnected;
-                e.Client.Send(Encoding.ASCII.GetBytes("GET /lorem.txt HTTP/1.1\r\nHost: www.thrdu.de\r\n\r\n"));
+                e.Client.OnDataReceived += Client_OnDataReceived;
+                m = new byte[10] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 };
+                e.Client.Send(m, 0, m.Length);
                 e.Client.ReceiveAsync();
             }
-            else e.Client.Disconnect();
+            else
+            {
+                Console.WriteLine("Failed to connect: {0}.", e.Status.ToString());
+            }
         }
 
-        static void Client_onClientDisconnected(object sender, socks5.TCP.ClientEventArgs e)
+        static void Client_OnDataReceived(object sender, Socks5ClientDataArgs e)
         {
-            Console.WriteLine("Client Disconnected.");
-        }
-
-        static void Client_onDataReceived(object sender, socks5.TCP.DataEventArgs e)
-        {
-            //Console.Write(Encoding.ASCII.GetString(e.Buffer, 0, e.Count));
+            Console.WriteLine("Received {0} bytes from server.", e.Count);
+            e.Client.Send(m, 0, m.Length);
             e.Client.ReceiveAsync();
-            //e.Client.Send(Encoding.ASCII.GetBytes("GET / HTTP/1.1\r\nHost: mcflix.com\r\n\r\n"));
         }
     }
 }

@@ -14,7 +14,9 @@ namespace socks5.TCP
 
         public Socket Sock { get; set; }
         private byte[] buffer;
-        private int packetSize = 65535;
+        private int packetSize = 4096;
+        public bool Receiving = false;
+
         public Client(Socket sock, int PacketSize)
         {
             //start the data exchange.
@@ -26,11 +28,13 @@ namespace socks5.TCP
 
         private void DataReceived(IAsyncResult res)
         {
+            Receiving = false;
             try
             {
                 SocketError err = SocketError.Success;
-                int received = 0;
-                if (((Socket)res.AsyncState).Connected) received = ((Socket)res.AsyncState).EndReceive(res, out err);
+                if(disposed)
+                    return;
+                int received = ((Socket)res.AsyncState).EndReceive(res, out err);
                 if (received <= 0 || err != SocketError.Success)
                 {
                     this.Disconnect();
@@ -55,6 +59,8 @@ namespace socks5.TCP
                     this.Disconnect();
                     return -1;
                 }
+                DataEventArgs dargs = new DataEventArgs(this, buffer, received);
+                this.onDataReceived(this, dargs);
                 return received;
             }
             catch
@@ -64,10 +70,15 @@ namespace socks5.TCP
             }
         }
 
-        public void ReceiveAsync()
+        public void ReceiveAsync(int buffersize = -1)
         {
             try
             {
+                if (buffersize > -1)
+                {
+                    buffer = new byte[buffersize];
+                }
+                Receiving = true;
                 Sock.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(DataReceived), Sock);
             }
             catch
@@ -81,17 +92,19 @@ namespace socks5.TCP
         {
             try
             {
-                if (this.Sock != null && this.Sock.Connected)
+                if (!this.disposed)
                 {
-                    onClientDisconnected(this, new ClientEventArgs(this));
-                    this.Sock.Shutdown(SocketShutdown.Both);
-                    this.Sock.Close();
-                    this.Sock = null;
-                    return;
+                    if (this.Sock != null && this.Sock.Connected)
+                    {
+                        onClientDisconnected(this, new ClientEventArgs(this));
+                        this.Sock.Close();
+                        //this.Sock = null;
+                        return;
+                    }
+                    else
+                        onClientDisconnected(this, new ClientEventArgs(this));
+                    this.Dispose();
                 }
-                else
-                    onClientDisconnected(this, new ClientEventArgs(this));
-                this.Dispose();
             }
             catch { }
         }
@@ -144,6 +157,8 @@ namespace socks5.TCP
                         this.Disconnect();
                         return false;
                     }
+                    DataEventArgs data = new DataEventArgs(this, buff, count);
+                    this.onDataSent(this, data);
                     return true;
                 }
                 return false;
