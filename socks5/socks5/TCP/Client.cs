@@ -59,8 +59,8 @@ namespace socks5.TCP
                     this.Disconnect();
                     return -1;
                 }
-                DataEventArgs dargs = new DataEventArgs(this, buffer, received);
-                this.onDataReceived(this, dargs);
+                DataEventArgs dargs = new DataEventArgs(this, data, received);
+                //this.onDataReceived(this, dargs);
                 return received;
             }
             catch
@@ -120,6 +120,8 @@ namespace socks5.TCP
                     this.Sock.Close();
                     return;
                 }
+                DataEventArgs data = new DataEventArgs(this, new byte[0] {}, sent);
+                this.onDataSent(this, data);
             }
             catch { this.Disconnect(); }
         }
@@ -135,9 +137,7 @@ namespace socks5.TCP
             {
                 if (this.Sock != null && this.Sock.Connected)
                 {
-                    DataEventArgs data = new DataEventArgs(this, buff, count);
-                    this.onDataSent(this, data);
-                    this.Sock.BeginSend(data.Buffer, data.Offset, data.Count, SocketFlags.None, new AsyncCallback(DataSent), this.Sock);
+                    this.Sock.BeginSend(buff, offset, count, SocketFlags.None, new AsyncCallback(DataSent), this.Sock);
                 }
             }
             catch

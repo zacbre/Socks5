@@ -4,6 +4,7 @@ using System.Text;
 using socks5.Plugin;
 using System.Net;
 using socks5.TCP;
+using socks5.Encryption;
 namespace socks5.Socks
 {
     public class SocksClient
@@ -11,7 +12,7 @@ namespace socks5.Socks
         public event EventHandler<SocksClientEventArgs> onClientDisconnected = delegate { };
 
         public Client Client;
-        public bool Authenticated { get; private set; }
+        public int Authenticated { get; private set; }
         public SocksClient(Client cli)
         {
             Client = cli;
@@ -28,60 +29,104 @@ namespace socks5.Socks
                 Client.Disconnect();
                 return;
             }
-            foreach (LoginHandler lh in PluginLoader.LoadPlugin(typeof(LoginHandler)))
+            this.Authenticated = 0;
+            SocksEncryption w = null;
+            List<object> lhandlers = PluginLoader.LoadPlugin(typeof(LoginHandler));
+            //check out different auth types, none will have no authentication, the rest do.
+            if (lhandlers.Count > 0 && authtypes.Contains(AuthTypes.SocksBoth) || authtypes.Contains(AuthTypes.SocksEncrypt) || authtypes.Contains(AuthTypes.SocksCompress) || authtypes.Contains(AuthTypes.Login))
             {
-                if (lh.Enabled)
+                //this is the preferred method.
+                w = Socks5.RequestSpecialMode(authtypes, Client);
+                foreach (LoginHandler lh in lhandlers)
                 {
-                    if(!authtypes.Contains(AuthTypes.Login)) //disconnect.
+                    if (lh.Enabled)
                     {
-                        Client.Send(new byte[] { (byte)HeaderTypes.Socks5, 0xFF });
-                        Client.Disconnect();
-                        return;
-                    }
-                    //request login.
-                    User user = Socks5.RequestLogin(this);
-                    if (user == null)
-                    {
-                        Client.Disconnect();
-                        return;
-                    }
-                    LoginStatus status = lh.HandleLogin(user);
-                    Client.Send(new byte[] { (byte)HeaderTypes.Socks5, (byte)status });
-                    if (status == LoginStatus.Denied)
-                    {
-                        Client.Disconnect();
-                        return;
-                    }
-                    else if (status == LoginStatus.Correct)
-                    {
-                        Authenticated = true;
-                        break;
+                        //request login.
+                        User user = Socks5.RequestLogin(this);
+                        if (user == null)
+                        {
+                            Client.Disconnect();
+                            return;
+                        }
+                        LoginStatus status = lh.HandleLogin(user);
+                        Client.Send(new byte[] { (byte)HeaderTypes.Socks5, (byte)status });
+                        if (status == LoginStatus.Denied)
+                        {
+                            Client.Disconnect();
+                            return;
+                        }
+                        else if (status == LoginStatus.Correct)
+                        {
+                            Authenticated = (w.GetAuthType() == AuthTypes.Login ? 1 : 2);
+                            break;
+                        }
                     }
                 }
             }
-            //Request Site Data.
-            if (!Authenticated)
-            {//no username/password required?
-                Authenticated = true;
-                Client.Send(new byte[] { (byte)HeaderTypes.Socks5, (byte)HeaderTypes.Zero });
+            else if (authtypes.Contains(AuthTypes.None))
+            {
+                //no authentication.
+                if (lhandlers.Count <= 1)
+                {
+                    //unsupported methods y0
+                    Authenticated = 1;
+                    Client.Send(new byte[] { (byte)HeaderTypes.Socks5, (byte)HeaderTypes.Zero });
+                }
+                else
+                {
+                    //unsupported.
+                    Client.Send(new byte[] { (byte)HeaderTypes.Socks5, (byte)AuthTypes.Unsupported });
+                    Client.Disconnect();
+                    return;
+                }
             }
-
-            SocksRequest req = Socks5.RequestTunnel(this);
-            if (req == null) { Client.Disconnect(); return; }
-            req1 = new SocksRequest(req.StreamType, req.Type, req.Address, req.Port);
-            //call on plugins for connect callbacks.
-            foreach (ConnectHandler conn in PluginLoader.LoadPlugin(typeof(ConnectHandler)))
-                if(conn.Enabled)
-                    if (conn.OnConnect(req1) == false)
-                    {
-                        req.Error = SocksError.Failure;
-                        Client.Send(req.GetData(true));
-                        Client.Disconnect();
-                        return;
-                    }
-            //Send Tunnel Data back.
-            SocksTunnel x = new SocksTunnel(this, req, req1, PacketSize, Timeout);
-            x.Open();
+            else
+            {
+                //unsupported.
+                Client.Send(new byte[] { (byte)HeaderTypes.Socks5, (byte)AuthTypes.Unsupported });
+                Client.Disconnect();
+                return;
+            }
+            //Request Site Data.
+            if (Authenticated == 1)
+            {
+                w = new SocksEncryption();
+                w.SetType(AuthTypes.Login);
+                SocksRequest req = Socks5.RequestTunnel(this, w);
+                if (req == null) { Client.Disconnect(); return; }
+                req1 = new SocksRequest(req.StreamType, req.Type, req.Address, req.Port);
+                //call on plugins for connect callbacks.
+                foreach (ConnectHandler conn in PluginLoader.LoadPlugin(typeof(ConnectHandler)))
+                    if (conn.Enabled)
+                        if (conn.OnConnect(req1) == false)
+                        {
+                            req.Error = SocksError.Failure;
+                            Client.Send(req.GetData(true));
+                            Client.Disconnect();
+                            return;
+                        }
+                //Send Tunnel Data back.
+                SocksTunnel x = new SocksTunnel(this, req, req1, PacketSize, Timeout);
+                x.Open();
+            }
+            else if (Authenticated == 2)
+            {
+                SocksRequest req = Socks5.RequestTunnel(this, w);
+                if (req == null) { Client.Disconnect(); return; }
+                req1 = new SocksRequest(req.StreamType, req.Type, req.Address, req.Port);
+                foreach (ConnectHandler conn in PluginLoader.LoadPlugin(typeof(ConnectHandler)))
+                    if (conn.Enabled)
+                        if (conn.OnConnect(req1) == false)
+                        {
+                            req.Error = SocksError.Failure;
+                            Client.Send(req.GetData(true));
+                            Client.Disconnect();
+                            return;
+                        }
+                //Send Tunnel Data back.
+                SocksSpecialTunnel x = new SocksSpecialTunnel(this, w, req, req1, PacketSize, Timeout);
+                x.Open();
+            }
         }
 
         void Client_onClientDisconnected(object sender, ClientEventArgs e)

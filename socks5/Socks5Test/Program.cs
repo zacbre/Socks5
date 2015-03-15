@@ -27,14 +27,14 @@ namespace Socks5Test
                 }
             }*/
             //Start showing network stats.
-            //Socks5Client p = new Socks5Client("142.4.208.185", 3128, "unexposedihope.speedresolve.com", 9000); //"yolo", "swag");
-            //p.OnConnected += p_OnConnected;
-            //p.ConnectAsync();
+            Socks5Client p = new Socks5Client("localhost", 1084, "your.ip.goes.here or domain", 9000, "yolo", "swag");
+            p.OnConnected += p_OnConnected;
+            p.ConnectAsync();
             while (true)
             {
-                Console.Clear();
+                /*Console.Clear();
                 Console.Write("Total Clients: \t{0}\nTotal Recvd: \t{1:0.00##}MB\nTotal Sent: \t{2:0.00##}MB\n", x.Stats.TotalClients, ((x.Stats.NetworkReceived / 1024f) / 1024f), ((x.Stats.NetworkSent / 1024f) / 1024f));
-                Console.Write("Receiving/sec: \t{0}\nSending/sec: \t{1}", x.Stats.BytesReceivedPerSec, x.Stats.BytesSentPerSec);
+                Console.Write("Receiving/sec: \t{0}\nSending/sec: \t{1}", x.Stats.BytesReceivedPerSec, x.Stats.BytesSentPerSec);*/
                 Thread.Sleep(1000);
             }
         }
@@ -44,7 +44,8 @@ namespace Socks5Test
             if (e.Status == socks5.Socks.SocksError.Granted)
             {
                 e.Client.OnDataReceived += Client_OnDataReceived;
-                m = new byte[10] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 };
+                e.Client.OnDisconnected += Client_OnDisconnected;
+                m = Encoding.ASCII.GetBytes("Start Sending Data:\n");
                 e.Client.Send(m, 0, m.Length);
                 e.Client.ReceiveAsync();
             }
@@ -54,10 +55,16 @@ namespace Socks5Test
             }
         }
 
+        static void Client_OnDisconnected(object sender, Socks5ClientArgs e)
+        {
+            //disconnected.
+            Console.WriteLine("DC'd");
+        }
+
         static void Client_OnDataReceived(object sender, Socks5ClientDataArgs e)
         {
             Console.WriteLine("Received {0} bytes from server.", e.Count);
-            e.Client.Send(m, 0, m.Length);
+            e.Client.Send(e.Buffer, 0, e.Count);
             e.Client.ReceiveAsync();
         }
     }
