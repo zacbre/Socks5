@@ -14,7 +14,7 @@ namespace socks5
         public int PacketSize { get; set; }
         public bool LoadPluginsFromDisk { get; set; }
 
-        public TcpServer _server;
+        private TcpServer _server;
         private Thread NetworkStats;
 
         public List<SocksClient> Clients = new List<SocksClient>();
@@ -71,7 +71,9 @@ namespace socks5
             //Console.WriteLine("Client connected.");
             //call plugins related to ClientConnectedHandler.
             foreach (ClientConnectedHandler cch in PluginLoader.LoadPlugin(typeof(ClientConnectedHandler)))
-                if (cch.Enabled)               
+            {
+                if (cch.Enabled)
+                {
                     try
                     {
                         if (!cch.OnConnect(e.Client, (IPEndPoint)e.Client.Sock.RemoteEndPoint))
@@ -83,6 +85,8 @@ namespace socks5
                     catch
                     {
                     }
+                }
+            }
             SocksClient client = new SocksClient(e.Client);
             e.Client.onDataReceived += Client_onDataReceived;
             e.Client.onDataSent += Client_onDataSent;
@@ -97,6 +101,19 @@ namespace socks5
             e.Client.Client.onDataReceived -= Client_onDataReceived;
             e.Client.Client.onDataSent -= Client_onDataSent;
             this.Clients.Remove(e.Client);
+            foreach (ClientDisconnectedHandler cdh in PluginLoader.LoadPlugin(typeof(ClientDisconnectedHandler)))
+            {
+                if (cdh.Enabled)
+                {
+                    try
+                    {
+                        cdh.OnDisconnected(sender, e);
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
         }
 
         void Client_onDataSent(object sender, DataEventArgs e)

@@ -7,7 +7,7 @@ namespace Socks5Test
 {
     class HTTPRewriter : socks5.Plugin.DataHandler
     {
-        public override void OnDataReceived(object sender, socks5.TCP.DataEventArgs e)
+        public override void OnServerDataReceived(object sender, socks5.TCP.DataEventArgs e)
         {
             if (e.Buffer.FindString("HTTP/1.") != -1 && e.Buffer.FindString("\r\n") != -1)
             {
@@ -16,7 +16,7 @@ namespace Socks5Test
             }
         }
 
-        public override void OnDataSent(object sender, socks5.TCP.DataEventArgs e)
+        public override void OnClientDataReceived(object sender, socks5.TCP.DataEventArgs e)
         {
            
         }

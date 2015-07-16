@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 
 namespace socks5.TCP
 {
@@ -24,6 +25,7 @@ namespace socks5.TCP
             onClientDisconnected = delegate { };
             buffer = new byte[PacketSize];
             packetSize = PacketSize;
+            sock.ReceiveBufferSize = PacketSize;
         }
 
         private void DataReceived(IAsyncResult res)
@@ -43,8 +45,13 @@ namespace socks5.TCP
                 DataEventArgs data = new DataEventArgs(this, buffer, received);
                 this.onDataReceived(this, data);
             }
-            catch
+            catch (Exception ex)
             {
+                #if DEBUG
+ #if DEBUG
+ Console.WriteLine(ex.ToString()); 
+#endif 
+#endif
                 this.Disconnect();
             }
         }
@@ -63,8 +70,11 @@ namespace socks5.TCP
                 //this.onDataReceived(this, dargs);
                 return received;
             }
-            catch
+            catch (Exception ex)
             {
+                #if DEBUG
+  Console.WriteLine(ex.ToString()); 
+#endif 
                 this.Disconnect();
                 return -1;
             }
@@ -81,8 +91,11 @@ namespace socks5.TCP
                 Receiving = true;
                 Sock.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(DataReceived), Sock);
             }
-            catch
+            catch(Exception ex)
             {
+                #if DEBUG
+ Console.WriteLine(ex.ToString()); 
+#endif
                 this.Disconnect();
             }
         }
@@ -92,6 +105,7 @@ namespace socks5.TCP
         {
             try
             {
+                //while (Receiving) Thread.Sleep(10);
                 if (!this.disposed)
                 {
                     if (this.Sock != null && this.Sock.Connected)
@@ -123,7 +137,11 @@ namespace socks5.TCP
                 DataEventArgs data = new DataEventArgs(this, new byte[0] {}, sent);
                 this.onDataSent(this, data);
             }
-            catch { this.Disconnect(); }
+            catch (Exception ex) {
+#if DEBUG
+ Console.WriteLine(ex.ToString()); 
+#endif 
+            }
         }
 
         public bool Send(byte[] buff)
@@ -140,8 +158,11 @@ namespace socks5.TCP
                     this.Sock.BeginSend(buff, offset, count, SocketFlags.None, new AsyncCallback(DataSent), this.Sock);
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                #if DEBUG
+ Console.WriteLine(ex.ToString()); 
+#endif
                 this.Disconnect();
             }
         }
@@ -163,8 +184,13 @@ namespace socks5.TCP
                 }
                 return false;
             }
-            catch
+            catch (Exception ex)
             {
+                #if DEBUG
+ #if DEBUG
+ Console.WriteLine(ex.ToString()); 
+#endif 
+#endif
                 this.Disconnect();
                 return false;
             }
@@ -181,8 +207,11 @@ namespace socks5.TCP
         // Protected implementation of Dispose pattern. 
         protected virtual void Dispose(bool disposing)
         {
+
             if (disposed)
                 return;
+
+            disposed = true;
 
             if (disposing)
             {
@@ -197,7 +226,7 @@ namespace socks5.TCP
 
             // Free any unmanaged objects here. 
             //
-            disposed = true;
+            
         }
     }
 }

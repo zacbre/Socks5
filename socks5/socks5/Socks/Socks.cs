@@ -191,6 +191,8 @@ namespace socks5.Socks
             StreamType = type;
             Address = address;
             Port = port;
+            Error = SocksError.Granted;
+            IPAddress p = this.IP; //get Error on the stack.
         }
         public IPAddress IP
         {
