@@ -14,5 +14,6 @@ namespace socks5.Plugin
     {
         public abstract LoginStatus HandleLogin(User user);
         public abstract bool Enabled { get; set; }
+        //
     }
 }

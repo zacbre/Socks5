@@ -132,6 +132,8 @@ namespace socks5.Socks
         void Client_onClientDisconnected(object sender, ClientEventArgs e)
         {
             this.onClientDisconnected(this, new SocksClientEventArgs(this));
+            Client.onClientDisconnected -= Client_onClientDisconnected;
+            //added to clear up memory
         }
     }
     public class User

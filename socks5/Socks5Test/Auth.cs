@@ -8,7 +8,7 @@ namespace Socks5Test
     {
         public override LoginStatus HandleLogin(socks5.Socks.User user)
         {
-            return (user.Username == "yolo" && user.Password == "swag" ? LoginStatus.Correct : LoginStatus.Denied);
+            return (user.Username == "test" && user.Password == "1234" ? LoginStatus.Correct : LoginStatus.Denied);
         }
 
         public override bool Enabled

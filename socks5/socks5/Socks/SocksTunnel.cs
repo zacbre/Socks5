@@ -33,6 +33,8 @@ namespace socks5
             Timeout = timeout;
         }
 
+        SocketAsyncEventArgs socketArgs;
+
         public void Open()
         {
             if (ModifiedReq.Address == null || ModifiedReq.Port <= -1) { Client.Client.Disconnect(); return; }
@@ -65,7 +67,7 @@ namespace socks5
                 Client.Client.Disconnect();
                 return;
             }
-            var socketArgs = new SocketAsyncEventArgs { RemoteEndPoint = new IPEndPoint(ModifiedReq.IP, ModifiedReq.Port) };
+            socketArgs = new SocketAsyncEventArgs { RemoteEndPoint = new IPEndPoint(ModifiedReq.IP, ModifiedReq.Port) };
             socketArgs.Completed += socketArgs_Completed;
             RemoteClient.Sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             if (!RemoteClient.Sock.ConnectAsync(socketArgs))
@@ -74,6 +76,7 @@ namespace socks5
 
         void socketArgs_Completed(object sender, SocketAsyncEventArgs e)
         {
+            
             byte[] request = Req.GetData(true); // Client.Client.Send(Req.GetData());
             if (e.SocketError != SocketError.Success)
             {
@@ -86,6 +89,12 @@ namespace socks5
             }
 
             Client.Client.Send(request);
+
+            if(socketArgs != null)
+            {
+                socketArgs.Completed -= socketArgs_Completed;
+                socketArgs.Dispose();
+            }
 
             switch (e.LastOperation)
             {
@@ -124,6 +133,8 @@ namespace socks5
             //Console.WriteLine("Client DC'd");
             disconnected = true;
             RemoteClient.Disconnect();
+            RemoteClient.onDataReceived -= RemoteClient_onDataReceived;
+            RemoteClient.onClientDisconnected -= RemoteClient_onClientDisconnected;
         }
 
         void RemoteClient_onClientDisconnected(object sender, ClientEventArgs e)
@@ -136,6 +147,8 @@ namespace socks5
             //Console.WriteLine("Remote DC'd");
             disconnected = true;
             Client.Client.Disconnect();
+            Client.Client.onDataReceived -= Client_onDataReceived;
+            Client.Client.onClientDisconnected -= Client_onClientDisconnected;
         }
 
         void RemoteClient_onDataReceived(object sender, DataEventArgs e)
