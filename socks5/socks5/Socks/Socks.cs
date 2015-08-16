@@ -1,4 +1,5 @@
-﻿using socks5.TCP;
+﻿using socks5.Encryption;
+using socks5.TCP;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -10,7 +11,8 @@ namespace socks5.Socks
     {
         public static List<AuthTypes> RequestAuth(SocksClient client)
         {
-            byte[] buff = Receive(client.Client);
+            byte[] buff;
+            int recv = Receive(client.Client, out buff);
 
             if (buff == null || (HeaderTypes)buff[0] != HeaderTypes.Socks5) return new List<AuthTypes>();
 
@@ -26,16 +28,89 @@ namespace socks5.Socks
                     case AuthTypes.None:
                         types.Add(AuthTypes.None);
                         break;
+                    case AuthTypes.SocksBoth:
+                        types.Add(AuthTypes.SocksBoth);
+                        break;
+                    case AuthTypes.SocksEncrypt:
+                        types.Add(AuthTypes.SocksEncrypt);
+                        break;
+                    case AuthTypes.SocksCompress:
+                        types.Add(AuthTypes.SocksCompress);
+                        break;
                 }
             }
             return types;
         }
 
+        public static SocksEncryption RequestSpecialMode(List<AuthTypes> auth, Client client)
+        {
+            //select mode, do key exchange if encryption, or start compression.
+            if (auth.Contains(AuthTypes.SocksBoth))
+            {
+                //tell client that we chose socksboth.
+                client.Send(new byte[] { (byte)HeaderTypes.Socks5, (byte)AuthTypes.SocksBoth });
+                //wait for public key.
+                SocksEncryption ph = new SocksEncryption();
+                ph.GenerateKeys();
+                //wait for public key.
+                byte[] buffer = new byte[4096];
+                int keysize = client.Receive(buffer, 0, buffer.Length);
+                //store key in our encryption class.
+                ph.SetKey(buffer, 0, keysize);
+                //send key.
+                client.Send(ph.GetPublicKey());
+                //now we give them our key.
+                client.Send(ph.ShareEncryptionKey());
+                //send more.
+                int enckeysize = client.Receive(buffer, 0, buffer.Length);
+                //decrypt with our public key.
+                byte[] newkey = new byte[enckeysize];
+                Buffer.BlockCopy(buffer, 0, newkey, 0, enckeysize);
+                ph.SetEncKey(ph.key.Decrypt(newkey, false));
+
+                ph.SetType(AuthTypes.SocksBoth);
+                //ready up our client.
+                return ph;
+            }
+            else if (auth.Contains(AuthTypes.SocksEncrypt))
+            {
+                //tell client that we chose socksboth.
+                client.Send(new byte[] { (byte)HeaderTypes.Socks5, (byte)AuthTypes.SocksEncrypt });
+                //wait for public key.
+                SocksEncryption ph = new SocksEncryption();
+                ph.GenerateKeys();
+                //wait for public key.
+                byte[] buffer = new byte[4096];
+                int keysize = client.Receive(buffer, 0, buffer.Length);
+                //store key in our encryption class.
+                ph.SetKey(buffer, 0, keysize);
+                ph.SetType(AuthTypes.SocksBoth);
+                //ready up our client.
+                return ph;
+            }
+            else if (auth.Contains(AuthTypes.SocksCompress))
+            {
+                //start compression.
+                client.Send(new byte[] { (byte)HeaderTypes.Socks5, (byte)AuthTypes.SocksCompress });
+                SocksEncryption ph = new SocksEncryption();
+                ph.SetType(AuthTypes.SocksCompress);
+                //ready
+            }
+            else if (auth.Contains(AuthTypes.Login))
+            {
+                SocksEncryption ph = new SocksEncryption();
+                ph.SetType(AuthTypes.Login);
+                return ph;
+            }
+            return null;
+        }
+
         public static User RequestLogin(SocksClient client)
         {
             //request authentication.
-            client.Client.Send(new byte[] { (byte)HeaderTypes.Socks5, (byte)HeaderTypes.Authentication });
-            byte[] buff = Receive(client.Client);
+            client.Client.Send(new byte[] { (byte)HeaderTypes.Socks5, (byte)AuthTypes.Login });
+            byte[] buff;
+            int recv = Receive(client.Client, out buff);
 
             if (buff == null || buff[0] != 0x01) return null;
 
@@ -47,9 +122,11 @@ namespace socks5.Socks
             return new User(username, password, (IPEndPoint)client.Client.Sock.RemoteEndPoint);
         }
 
-        public static SocksRequest RequestTunnel(SocksClient client)
+        public static SocksRequest RequestTunnel(SocksClient client, SocksEncryption ph)
         {
-            byte[] buff = Receive(client.Client);
+            byte[] data;
+            int recv = Receive(client.Client, out data);
+            byte[] buff = ph.ProcessInputData(data, 0, recv);
             if (buff == null || (HeaderTypes)buff[0] != HeaderTypes.Socks5) return null;
             switch ((StreamTypes)buff[1])
             {
@@ -94,16 +171,10 @@ namespace socks5.Socks
             }
         }
 
-        public static byte[] Receive(Client client)
+        public static int Receive(Client client, out byte[] buffer)
         {
-            byte[] buffer = new byte[2048];
-            int received = client.Receive(buffer, 0, buffer.Length);
-            if (received != -1)
-            {
-                return buffer;
-            }
-            else
-                return null;
+            buffer = new byte[65535];
+            return client.Receive(buffer, 0, buffer.Length);
         }
     }
 
@@ -190,13 +261,16 @@ namespace socks5.Socks
     public enum AuthTypes
     {
         Login = 0x02,
+        SocksCompress = 0x88,
+        SocksEncrypt = 0x90,
+        SocksBoth = 0xFE,
+        Unsupported = 0xFF,
         None = 0x00
     }
 
     public enum HeaderTypes
     {
         Socks5 = 0x05,
-        Authentication = 0x02,
         Zero = 0x00
     }
 

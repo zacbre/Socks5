@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Encryption\DarthEncrypt.cs" />
+    <Compile Include="Encryption\SocksEncryption.cs" />
     <Compile Include="ExamplePlugins\ClientConnectHandlerExample.cs" />
     <Compile Include="Plugin\ClientConnectedHandler.cs" />
     <Compile Include="Plugin\GenericPlugin.cs" />
@@ -48,6 +50,7 @@
     <Compile Include="Socks5Client\Socks.cs" />
     <Compile Include="Socks5Client\Socks5Client.cs" />
     <Compile Include="Socks5Client\Events\SocksClientDataArgs.cs" />
+    <Compile Include="Socks\SocksSpecialTunnel.cs" />
     <Compile Include="TCP\BandwidthCounter.cs" />
     <Compile Include="ExamplePlugins\ConnectHandlerExample.cs" />
     <Compile Include="Extensions.cs" />
@@ -68,6 +71,7 @@
     <Compile Include="Socks\SocksClient.cs" />
     <Compile Include="TCP\Stats.cs" />
     <Compile Include="TCP\TcpServer.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

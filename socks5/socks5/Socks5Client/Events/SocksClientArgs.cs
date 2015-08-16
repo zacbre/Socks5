@@ -8,14 +8,14 @@ namespace socks5.Socks5Client
 {
     public class Socks5ClientArgs : EventArgs
     {
-        public Socks5ClientArgs(Client p, SocksError x)
+        public Socks5ClientArgs(Socks5Client p, SocksError x)
         {
             sock = p;
             status = x;
         }
-        private Client sock = null;
+        private Socks5Client sock = null;
         private SocksError status = SocksError.Failure;
         public SocksError Status { get { return status; } }
-        public Client Client { get { return sock; } }
+        public Socks5Client Client { get { return sock; } }
     }
 }
