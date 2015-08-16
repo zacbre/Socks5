@@ -77,14 +77,24 @@ namespace socks5.Socks5Client
             //
             p = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             Client = new Client(p, 2048);
+            Client.onClientDisconnected += Client_onClientDisconnected;
             Client.Sock.BeginConnect(new IPEndPoint(ipAddress, Port), new AsyncCallback(onConnected), Client);
             //return status?
         }
 
+<<<<<<< HEAD
+=======
+        void Client_onClientDisconnected(object sender, ClientEventArgs e)
+        {
+            this.OnDisconnected(this, new Socks5ClientArgs(this, SocksError.Expired));
+        }
+
+>>>>>>> 3d6767cf2e957d5c8116151056f8baaa12445d0f
         public bool Send(byte[] buffer, int offset, int length)
         {
             try
             {
+<<<<<<< HEAD
                 //craft headers & shit.
                 byte[] outputdata = enc.ProcessOutputData(buffer, offset, length);
                 //send outputdata's length firs.t
@@ -93,6 +103,27 @@ namespace socks5.Socks5Client
                     Client.Send(BitConverter.GetBytes(outputdata.Length));
                 }
                 Client.Send(outputdata, 0, outputdata.Length);
+=======
+                //buffer sending.
+                int offst = 0;
+                while(true)
+                {
+                    byte[] outputdata = enc.ProcessOutputData(buffer, offst, (length - offst > 4096 ? 4096 : length - offst));
+                    offst += (length - offst > 4096 ? 4096 : length - offst);
+                    //craft headers & shit.
+                    //send outputdata's length firs.t
+                    if (enc.GetAuthType() != AuthTypes.Login && enc.GetAuthType() != AuthTypes.None)
+                    {
+                        Client.Send(BitConverter.GetBytes(outputdata.Length));
+                    }
+                    Client.Send(outputdata, 0, outputdata.Length);
+                    if (offst >= buffer.Length)
+                    {
+                        //exit;
+                        return true;
+                    }
+                }
+>>>>>>> 3d6767cf2e957d5c8116151056f8baaa12445d0f
                 return true;
             }
             catch
@@ -186,19 +217,29 @@ namespace socks5.Socks5Client
         void Client_onDataReceived(object sender, DataEventArgs e)
         {
             //this should be packet header.
+<<<<<<< HEAD
             
+=======
+>>>>>>> 3d6767cf2e957d5c8116151056f8baaa12445d0f
             try
             {
                 if (enc.GetAuthType() != AuthTypes.Login && enc.GetAuthType() != AuthTypes.None)
                 {
                     //get total number of bytes.
+<<<<<<< HEAD
                     byte[] buffer = new byte[sizeof(int)];
                     Client.Receive(buffer, 0, buffer.Length);
+=======
+>>>>>>> 3d6767cf2e957d5c8116151056f8baaa12445d0f
                     int torecv = BitConverter.ToInt32(e.Buffer, e.Offset);
 
                     byte[] newbuff = new byte[torecv];
                     int recv = Client.Receive(newbuff, 0, newbuff.Length);
+<<<<<<< HEAD
 
+=======
+                    
+>>>>>>> 3d6767cf2e957d5c8116151056f8baaa12445d0f
                     if (recv == torecv)
                     {
                         //yey
@@ -208,7 +249,11 @@ namespace socks5.Socks5Client
                         e.Buffer = output;
                         e.Offset = 0;
                         e.Count = output.Length;
+<<<<<<< HEAD
                         this.OnDataReceived(this, new Socks5ClientDataArgs(Client, e.Buffer, e.Offset, e.Count));
+=======
+                        this.OnDataReceived(this, new Socks5ClientDataArgs(this, e.Buffer, e.Count, e.Offset));
+>>>>>>> 3d6767cf2e957d5c8116151056f8baaa12445d0f
                     }
                     else
                     {
@@ -217,7 +262,11 @@ namespace socks5.Socks5Client
                 }
                 else
                 {
+<<<<<<< HEAD
                     this.OnDataReceived(this, new Socks5ClientDataArgs(Client, e.Buffer, e.Offset, e.Count));
+=======
+                    this.OnDataReceived(this, new Socks5ClientDataArgs(this, e.Buffer, e.Count, e.Offset));
+>>>>>>> 3d6767cf2e957d5c8116151056f8baaa12445d0f
                 }
             }
             catch

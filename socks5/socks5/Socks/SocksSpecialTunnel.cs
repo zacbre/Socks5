@@ -139,7 +139,11 @@ namespace socks5.Socks
             {
                 foreach (DataHandler f in Plugins)
                     if (f.Enabled)
+<<<<<<< HEAD
                         f.OnDataReceived(this, e);
+=======
+                        f.OnServerDataReceived(this, e);
+>>>>>>> 3d6767cf2e957d5c8116151056f8baaa12445d0f
                 //craft headers & shit.
                 byte[] outputdata = se.ProcessOutputData(e.Buffer, e.Offset, e.Count);
                 //send outputdata's length firs.t
@@ -182,7 +186,11 @@ namespace socks5.Socks
                     //receive full packet.
                     foreach (DataHandler f in Plugins)
                         if (f.Enabled)
+<<<<<<< HEAD
                             f.OnDataSent(this, e);
+=======
+                            f.OnClientDataReceived(this, e);
+>>>>>>> 3d6767cf2e957d5c8116151056f8baaa12445d0f
                     RemoteClient.SendAsync(e.Buffer, e.Offset, e.Count);                   
                     if (!Client.Client.Receiving)
                         Client.Client.ReceiveAsync();

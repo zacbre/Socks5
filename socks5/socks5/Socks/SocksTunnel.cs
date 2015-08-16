@@ -59,6 +59,12 @@ namespace socks5
                     }
                 }
             }
+            if (ModifiedReq.Error != SocksError.Granted)
+            {
+                Client.Client.Send(Req.GetData(true));
+                Client.Client.Disconnect();
+                return;
+            }
             var socketArgs = new SocketAsyncEventArgs { RemoteEndPoint = new IPEndPoint(ModifiedReq.IP, ModifiedReq.Port) };
             socketArgs.Completed += socketArgs_Completed;
             RemoteClient.Sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -137,7 +143,8 @@ namespace socks5
             e.Request = this.ModifiedReq;
             foreach (DataHandler f in Plugins)
                 if(f.Enabled)
-                    f.OnDataReceived(this, e);
+                    f.OnServerDataReceived(this, e);
+
             Client.Client.Send(e.Buffer, e.Offset, e.Count);
             if (!RemoteClient.Receiving)
                 RemoteClient.ReceiveAsync();
@@ -150,7 +157,8 @@ namespace socks5
             e.Request = this.ModifiedReq;
             foreach (DataHandler f in Plugins)
                 if(f.Enabled)
-                    f.OnDataSent(this, e);
+                    f.OnClientDataReceived(this, e);
+            
             RemoteClient.Send(e.Buffer, e.Offset, e.Count);
             if (!Client.Client.Receiving)
                 Client.Client.ReceiveAsync();

@@ -167,6 +167,10 @@ namespace socks5.Socks5Client
                             //good.
                             if (buff[1] == (byte)AuthTypes.Login)
                             {
+<<<<<<< HEAD
+=======
+                                if (Username == null || Password == null) { p.Client.Sock.Close(); return false; }
+>>>>>>> 3d6767cf2e957d5c8116151056f8baaa12445d0f
                                 int ret = Socks.SendLogin(p.Client, Username, Password);
                                 if (ret != 1)
                                 {
