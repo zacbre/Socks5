@@ -26,7 +26,7 @@ namespace socks5
         public Socks5Server(IPAddress ip, int port)
         {
             this.Timeout = 1000;
-            this.PacketSize = 128;
+            this.PacketSize = 65535;
             this._server = new TcpServer(ip, port);
             this._server.onClientConnected += _server_onClientConnected;
         }
