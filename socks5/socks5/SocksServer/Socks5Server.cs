@@ -118,14 +118,16 @@ namespace socks5
 
         void Client_onDataSent(object sender, DataEventArgs e)
         {
-            this.Stats.AddBytes(e.Count, ByteType.Sent);
-            this.Stats.AddPacket(PacketType.Sent);
+            //Technically we are sending data from the remote server to the client, so it's being "received" 
+            this.Stats.AddBytes(e.Count, ByteType.Received);
+            this.Stats.AddPacket(PacketType.Received);
         }
 
         void Client_onDataReceived(object sender, DataEventArgs e)
         {
-            this.Stats.AddBytes(e.Count, ByteType.Received);
-            this.Stats.AddPacket(PacketType.Received);
+            //Technically we are receiving data from the client and sending it to the remote server, so it's being "sent" 
+            this.Stats.AddBytes(e.Count, ByteType.Sent);
+            this.Stats.AddPacket(PacketType.Sent);
         }
     }
 }
