@@ -39,28 +39,25 @@ namespace socks5.Socks
                 w = Socks5.RequestSpecialMode(authtypes, Client);
                 foreach (LoginHandler lh in lhandlers)
                 {
-                    if (lh.Enabled)
-                    {
-                        //request login.
-                        User user = Socks5.RequestLogin(this);
-                        if (user == null)
-                        {
-                            Client.Disconnect();
-                            return;
-                        }
-                        LoginStatus status = lh.HandleLogin(user);
-                        Client.Send(new byte[] { (byte)HeaderTypes.Socks5, (byte)status });
-                        if (status == LoginStatus.Denied)
-                        {
-                            Client.Disconnect();
-                            return;
-                        }
-                        else if (status == LoginStatus.Correct)
-                        {
-                            Authenticated = (w.GetAuthType() == AuthTypes.Login ? 1 : 2);
-                            break;
-                        }
-                    }
+					//request login.
+					User user = Socks5.RequestLogin(this);
+					if (user == null)
+					{
+						Client.Disconnect();
+						return;
+					}
+					LoginStatus status = lh.HandleLogin(user);
+					Client.Send(new byte[] { (byte)HeaderTypes.Socks5, (byte)status });
+					if (status == LoginStatus.Denied)
+					{
+						Client.Disconnect();
+						return;
+					}
+					else if (status == LoginStatus.Correct)
+					{
+						Authenticated = (w.GetAuthType() == AuthTypes.Login ? 1 : 2);
+						break;
+					}
                 }
             }
             else if (authtypes.Contains(AuthTypes.None))
@@ -97,14 +94,13 @@ namespace socks5.Socks
                 req1 = new SocksRequest(req.StreamType, req.Type, req.Address, req.Port);
                 //call on plugins for connect callbacks.
                 foreach (ConnectHandler conn in PluginLoader.LoadPlugin(typeof(ConnectHandler)))
-                    if (conn.Enabled)
-                        if (conn.OnConnect(req1) == false)
-                        {
-                            req.Error = SocksError.Failure;
-                            Client.Send(req.GetData(true));
-                            Client.Disconnect();
-                            return;
-                        }
+					if (conn.OnConnect(req1) == false)
+					{
+						req.Error = SocksError.Failure;
+						Client.Send(req.GetData(true));
+						Client.Disconnect();
+						return;
+					}  
                 //Send Tunnel Data back.
                 SocksTunnel x = new SocksTunnel(this, req, req1, PacketSize, Timeout);
                 x.Open();
@@ -115,14 +111,13 @@ namespace socks5.Socks
                 if (req == null) { Client.Disconnect(); return; }
                 req1 = new SocksRequest(req.StreamType, req.Type, req.Address, req.Port);
                 foreach (ConnectHandler conn in PluginLoader.LoadPlugin(typeof(ConnectHandler)))
-                    if (conn.Enabled)
-                        if (conn.OnConnect(req1) == false)
-                        {
-                            req.Error = SocksError.Failure;
-                            Client.Send(req.GetData(true));
-                            Client.Disconnect();
-                            return;
-                        }
+					if (conn.OnConnect(req1) == false)
+					{
+						req.Error = SocksError.Failure;
+						Client.Send(req.GetData(true));
+						Client.Disconnect();
+						return;
+					}  
                 //Send Tunnel Data back.
                 SocksSpecialTunnel x = new SocksSpecialTunnel(this, w, req, req1, PacketSize, Timeout);
                 x.Open();

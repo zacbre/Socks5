@@ -41,7 +41,6 @@ namespace socks5.Socks
             Console.WriteLine("{0}:{1}", ModifiedReq.Address, ModifiedReq.Port);
 #endif
             foreach (ConnectSocketOverrideHandler conn in PluginLoader.LoadPlugin(typeof(ConnectSocketOverrideHandler)))
-            if(conn.Enabled)
             {
                 Client pm = conn.OnConnectOverride(ModifiedReq);
                 if (pm != null)
@@ -138,8 +137,7 @@ namespace socks5.Socks
             try
             {
                 foreach (DataHandler f in Plugins)
-                    if (f.Enabled)
-                        f.OnServerDataReceived(this, e);
+	                f.OnServerDataReceived(this, e);
                 //craft headers & shit.
                 byte[] outputdata = se.ProcessOutputData(e.Buffer, e.Offset, e.Count);
                 //send outputdata's length firs.t
@@ -181,8 +179,7 @@ namespace socks5.Socks
                     e.Count = output.Length;
                     //receive full packet.
                     foreach (DataHandler f in Plugins)
-                        if (f.Enabled)
-                            f.OnClientDataReceived(this, e);
+	                    f.OnClientDataReceived(this, e);
                     RemoteClient.SendAsync(e.Buffer, e.Offset, e.Count);                   
                     if (!Client.Client.Receiving)
                         Client.Client.ReceiveAsync();

@@ -72,20 +72,17 @@ namespace socks5
             //call plugins related to ClientConnectedHandler.
             foreach (ClientConnectedHandler cch in PluginLoader.LoadPlugin(typeof(ClientConnectedHandler)))
             {
-                if (cch.Enabled)
-                {
-                    try
-                    {
-                        if (!cch.OnConnect(e.Client, (IPEndPoint)e.Client.Sock.RemoteEndPoint))
-                        {
-                            e.Client.Disconnect();
-                            return;
-                        }
-                    }
-                    catch
-                    {
-                    }
-                }
+				try
+				{
+					if (!cch.OnConnect(e.Client, (IPEndPoint)e.Client.Sock.RemoteEndPoint))
+					{
+						e.Client.Disconnect();
+						return;
+					}
+				}
+				catch
+				{
+				}
             }
             SocksClient client = new SocksClient(e.Client);
             e.Client.onDataReceived += Client_onDataReceived;
@@ -103,16 +100,13 @@ namespace socks5
             this.Clients.Remove(e.Client);
             foreach (ClientDisconnectedHandler cdh in PluginLoader.LoadPlugin(typeof(ClientDisconnectedHandler)))
             {
-                if (cdh.Enabled)
-                {
-                    try
-                    {
-                        cdh.OnDisconnected(sender, e);
-                    }
-                    catch
-                    {
-                    }
-                }
+				try
+				{
+					cdh.OnDisconnected(sender, e);
+				}
+				catch
+				{
+				}
             }
         }
 

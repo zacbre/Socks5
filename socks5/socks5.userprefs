@@ -1,0 +1,27 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="socks5/Plugin/PluginLoader.cs">
+    <Files>
+      <File FileName="Socks5Test/Program.cs" Line="1" Column="1" />
+      <File FileName="Socks5Test/Auth.cs" Line="1" Column="1" />
+      <File FileName="socks5/SocksServer/Socks5Server.cs" Line="1" Column="1" />
+      <File FileName="socks5/Plugin/PluginLoader.cs" Line="1" Column="1" />
+      <File FileName="socks5/Socks/SocksClient.cs" Line="23" Column="23" />
+      <File FileName="socks5/TCP/TcpServer.cs" Line="1" Column="1" />
+      <File FileName="socks5/Socks/Socks.cs" Line="1" Column="1" />
+      <File FileName="socks5/Socks/SocksSpecialTunnel.cs" Line="2" Column="2" />
+      <File FileName="socks5/Socks/SocksTunnel.cs" Line="2" Column="2" />
+      <File FileName="socks5/TCP/BandwidthCounter.cs" Line="1" Column="1" />
+      <File FileName="socks5/TCP/Client.cs" Line="1" Column="1" />
+      <File FileName="socks5/TCP/ClientEventArgs.cs" Line="1" Column="1" />
+      <File FileName="socks5/TCP/Stats.cs" Line="1" Column="1" />
+      <File FileName="socks5/Utils.cs" Line="1" Column="1" />
+      <File FileName="socks5/Socks5Client/Socks5Client.cs" Line="1" Column="1" />
+      <File FileName="socks5/Socks5Client/Socks.cs" Line="2" Column="2" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

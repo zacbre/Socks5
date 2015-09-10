@@ -133,7 +133,8 @@ namespace socks5.Plugin
             {
                 if (assemblytype.IsAssignableFrom(x.GetType()))
                 {
-                    list.Push(x);
+					if(((GenericPlugin)x).Enabled)
+                    	list.Push(x);
                 }
             }
             return list;
