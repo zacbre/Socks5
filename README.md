@@ -1,7 +1,3 @@
-#Socks5Server 
-
-A full-fledged performance socks5 proxy server written in C#. Plugin support included.
-
 #Plugin Information
 
 With plugins, you can currently do the following:
