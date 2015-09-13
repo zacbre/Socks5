@@ -67,7 +67,7 @@ namespace socks5.Encryption
             //realign buffer.
             try
             {
-                byte[] buff = new byte[count - offset];
+                byte[] buff = new byte[count];
                 Buffer.BlockCopy(buffer, offset, buff, 0, count);
                 switch (this.auth)
                 {

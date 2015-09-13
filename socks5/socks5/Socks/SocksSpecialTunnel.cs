@@ -99,6 +99,8 @@ namespace socks5.Socks
             try
             {
                 //all plugins get the event thrown.
+                Client.Client.Sock.ReceiveBufferSize = 4200;
+                Client.Client.Sock.SendBufferSize = 4200;
                 foreach (DataHandler data in PluginLoader.LoadPlugin(typeof(DataHandler)))
                     Plugins.Push(data);
                 Client.Client.onDataReceived += Client_onDataReceived;
@@ -115,6 +117,9 @@ namespace socks5.Socks
         bool disconnected = false;
         void Client_onClientDisconnected(object sender, ClientEventArgs e)
         {
+#if DEBUG
+            Console.WriteLine("Client DC'd");
+#endif
             if (disconnected) return;
             disconnected = true;
             RemoteClient.Disconnect();
@@ -125,10 +130,10 @@ namespace socks5.Socks
 #if DEBUG
             Console.WriteLine("Remote DC'd");
 #endif
-            if (disconnected) return;
+           /* if (disconnected) return;
             disconnected = true;
-            Client.Client.Disconnect();
-            disconnected = true;
+            //Client.Client.Disconnect();
+            disconnected = true;*/
         }
 
         void RemoteClient_onDataReceived(object sender, DataEventArgs e)
@@ -140,22 +145,19 @@ namespace socks5.Socks
 	                f.OnServerDataReceived(this, e);
                 //craft headers & shit.
                 byte[] outputdata = se.ProcessOutputData(e.Buffer, e.Offset, e.Count);
-                //send outputdata's length firs.t
-                Client.Client.Send(BitConverter.GetBytes(outputdata.Length));
-                e.Buffer = outputdata;
-                e.Offset = 0;
-                e.Count = outputdata.Length;
-                //ok now send data.
-                Client.Client.Send(e.Buffer, e.Offset, e.Count);
+                byte[] datatosend = new byte[outputdata.Length + 4];
+                Buffer.BlockCopy(outputdata, 0, datatosend, 4, outputdata.Length);
+                Buffer.BlockCopy(BitConverter.GetBytes(outputdata.Length), 0, datatosend, 0, 4);
+                //send outputdata's length first.
+                Client.Client.Send(datatosend);
                 if(!RemoteClient.Receiving)
                     RemoteClient.ReceiveAsync();
                 if (!Client.Client.Receiving)
                     Client.Client.ReceiveAsync();
-                
             }
             catch
             {
-                Client.Client.Disconnect();
+                //Client.Client.Disconnect();
                 RemoteClient.Disconnect();
             }
         }
@@ -166,30 +168,23 @@ namespace socks5.Socks
             //this should be packet header.
             try
             {
-                int torecv = BitConverter.ToInt32(e.Buffer, e.Offset);
-                byte[] newbuff = new byte[torecv];
-                int recv = Client.Client.Receive(newbuff, 0, newbuff.Length);
-                if (recv == torecv)
-                {
-                    //yey
-                    //process packet.
-                    byte[] output = se.ProcessInputData(newbuff, 0, recv);
-                    e.Buffer = output;
-                    e.Offset = 0;
-                    e.Count = output.Length;
-                    //receive full packet.
-                    foreach (DataHandler f in Plugins)
-	                    f.OnClientDataReceived(this, e);
-                    RemoteClient.SendAsync(e.Buffer, e.Offset, e.Count);                   
-                    if (!Client.Client.Receiving)
-                        Client.Client.ReceiveAsync();
-                    if (!RemoteClient.Receiving)
-                        RemoteClient.ReceiveAsync();
-                }
-                else
-                {
-                    throw new Exception();
-                }
+                int packetsize = BitConverter.ToInt32(e.Buffer, 0);
+                byte[] newbuff = new byte[packetsize];
+                //yey
+                //process packet.
+                byte[] output = se.ProcessInputData(e.Buffer, 4, packetsize);
+                e.Buffer = null;
+                e.Buffer = output;
+                e.Offset = 0;
+                e.Count = output.Length;
+                //receive full packet.
+                foreach (DataHandler f in Plugins)
+                    f.OnClientDataReceived(this, e);
+                RemoteClient.SendAsync(e.Buffer, e.Offset, e.Count);
+                if (!Client.Client.Receiving)
+                    Client.Client.ReceiveAsync();
+                if (!RemoteClient.Receiving)
+                    RemoteClient.ReceiveAsync();
             }
             catch
             {

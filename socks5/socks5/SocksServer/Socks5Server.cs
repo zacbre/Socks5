@@ -25,7 +25,7 @@ namespace socks5
         public Socks5Server(IPAddress ip, int port)
         {
             Timeout = 5000;
-            PacketSize = 65535;
+            PacketSize = 4096;
             LoadPluginsFromDisk = false;
             Stats = new Stats();
             _server = new TcpServer(ip, port);

@@ -63,7 +63,7 @@ namespace socks5.Socks
             else if (authtypes.Contains(AuthTypes.None))
             {
                 //no authentication.
-                if (lhandlers.Count <= 1)
+                if (lhandlers.Count <= 0)
                 {
                     //unsupported methods y0
                     Authenticated = 1;

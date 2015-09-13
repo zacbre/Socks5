@@ -84,7 +84,17 @@ namespace socks5.Socks
                 int keysize = client.Receive(buffer, 0, buffer.Length);
                 //store key in our encryption class.
                 ph.SetKey(buffer, 0, keysize);
-                ph.SetType(AuthTypes.SocksBoth);
+                //send key.
+                client.Send(ph.GetPublicKey());
+                //now we give them our key.
+                client.Send(ph.ShareEncryptionKey());
+                //send more.
+                int enckeysize = client.Receive(buffer, 0, buffer.Length);
+                //decrypt with our public key.
+                byte[] newkey = new byte[enckeysize];
+                Buffer.BlockCopy(buffer, 0, newkey, 0, enckeysize);
+                ph.SetEncKey(ph.key.Decrypt(newkey, false));
+                ph.SetType(AuthTypes.SocksEncrypt);
                 //ready up our client.
                 return ph;
             }

@@ -14,6 +14,7 @@ namespace Socks5Test
         static void Main(string[] args)
         {
             Socks5Server x = new Socks5Server(IPAddress.Any, 1080);
+            PluginLoader.ChangePluginStatus(false, typeof(Auth));
             x.Start();
             while (true)
             {

@@ -128,6 +128,7 @@ public class DarthEncrypt
         byte[] rgbKey = new PasswordDeriveBytes(this.PassPhrase, rgbSalt, strHashName, this.PassPhraseStrength).GetBytes((num / 8));
         RijndaelManaged managed = new RijndaelManaged();
         managed.Mode = CipherMode.CBC;
+        managed.Padding = PaddingMode.Zeros;
         ICryptoTransform transform = managed.CreateDecryptor(rgbKey, bytes);
         MemoryStream stream = new MemoryStream(buffer);
         CryptoStream stream2 = new CryptoStream(stream, transform, CryptoStreamMode.Read);
@@ -333,6 +334,7 @@ public class DarthEncrypt
         byte[] rgbKey = new PasswordDeriveBytes(this.PassPhrase, rgbSalt, strHashName, this.PassPhraseStrength).GetBytes((num / 8));
         RijndaelManaged managed = new RijndaelManaged();
         managed.Mode = CipherMode.CBC;
+        managed.Padding = PaddingMode.Zeros;
         ICryptoTransform transform = managed.CreateEncryptor(rgbKey, bytes);
         MemoryStream stream = new MemoryStream();
         CryptoStream stream2 = new CryptoStream(stream, transform, CryptoStreamMode.Write);

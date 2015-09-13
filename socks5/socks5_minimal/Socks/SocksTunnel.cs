@@ -80,6 +80,7 @@ namespace socks5
         void RemoteClient_onClientDisconnected(object sender, ClientEventArgs e)
         {
             Client.Client.Disconnect();
+            Client.Client.onDataReceived -= Client_onDataReceived;
         }
 
         void RemoteClient_onDataReceived(object sender, DataEventArgs e)

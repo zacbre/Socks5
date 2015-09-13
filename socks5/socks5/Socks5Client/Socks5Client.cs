@@ -18,6 +18,9 @@ namespace socks5.Socks5Client
         private int Port;
         public bool reqPass = false;
 
+        private byte[] HalfReceiveBuffer = new byte[4200];
+        private int HalfReceivedBufferLength = 0;
+
         private string Username;
         private string Password;
         private string Dest;
@@ -76,7 +79,7 @@ namespace socks5.Socks5Client
         {
             //
             p = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            Client = new Client(p, 2048);
+            Client = new Client(p, 4200);
             Client.onClientDisconnected += Client_onClientDisconnected;
             Client.Sock.BeginConnect(new IPEndPoint(ipAddress, Port), new AsyncCallback(onConnected), Client);
             //return status?
@@ -95,13 +98,17 @@ namespace socks5.Socks5Client
                 int offst = 0;
                 while(true)
                 {
-                    byte[] outputdata = enc.ProcessOutputData(buffer, offst, (length - offst > 4096 ? 4096 : length - offst));
-                    offst += (length - offst > 4096 ? 4096 : length - offst);
+                    byte[] outputdata = enc.ProcessOutputData(buffer, offst, (length - offst > 4092 ? 4092 : length - offst));
+                    offst += (length - offst > 4092 ? 4092 : length - offst);
                     //craft headers & shit.
                     //send outputdata's length firs.t
                     if (enc.GetAuthType() != AuthTypes.Login && enc.GetAuthType() != AuthTypes.None)
                     {
-                        Client.Send(BitConverter.GetBytes(outputdata.Length));
+                        byte[] datatosend = new byte[outputdata.Length + 4];
+                        Buffer.BlockCopy(outputdata, 0, datatosend, 4, outputdata.Length);
+                        Buffer.BlockCopy(BitConverter.GetBytes(outputdata.Length), 0, datatosend, 0, 4);
+                        outputdata = null;
+                        outputdata = datatosend;
                     }
                     Client.Send(outputdata, 0, outputdata.Length);
                     if (offst >= buffer.Length)
@@ -123,53 +130,47 @@ namespace socks5.Socks5Client
             return Send(buffer, 0, buffer.Length);
         }
 
-        public int Receive(out byte[] data)
+        public int Receive(byte[] buffer, int offset, int count)
         {
             //this should be packet header.
             try
             {
-                //if we're using special encryptions, get size first.
-                int recv = 0;
-                byte[] newbuff;
-                int torecv = 0;
                 if (enc.GetAuthType() != AuthTypes.Login && enc.GetAuthType() != AuthTypes.None)
                 {
-                    byte[] buffer = new byte[sizeof(int)];
-                    recv = Client.Receive(buffer, 0, buffer.Length);
-                    //get total number of bytes.
-                    torecv = BitConverter.ToInt32(buffer, 0);
-                    newbuff = new byte[torecv];
-                }
-                else 
-                {
-                    newbuff = new byte[4096];
-                }
-                recv = Client.Receive(newbuff, 0, newbuff.Length);
-                if (recv <= 0)
-                {
-                    throw new Exception();
-                }
-                if (enc.GetAuthType() != AuthTypes.Login && enc.GetAuthType() != AuthTypes.None)
-                {
-                    if (recv == torecv)
+                    if(HalfReceivedBufferLength > 0)
                     {
-                        //yey
-                        //process packet.
-                        byte[] output = enc.ProcessInputData(newbuff, 0, recv);
-                        //receive full packet.
-                        data = output;
-                        return recv;
+                        if (HalfReceivedBufferLength <= count)
+                        {
+                            Buffer.BlockCopy(HalfReceiveBuffer, 0, buffer, offset, HalfReceivedBufferLength);
+                            HalfReceivedBufferLength = 0;
+                            return HalfReceivedBufferLength;
+                        }
+                        else
+                        {
+                            Buffer.BlockCopy(HalfReceiveBuffer, 0, buffer, offset, count);
+                            HalfReceivedBufferLength = HalfReceivedBufferLength - count;
+                            Buffer.BlockCopy(HalfReceiveBuffer, count, HalfReceiveBuffer, 0, count);
+
+                            return count;
+                        }
                     }
-                    else
-                    {
-                        throw new Exception();
-                    }
+
+                    count = Math.Min(4200, count);
+
+                    byte[] databuf = new byte[4200];
+                    int got = Client.Receive(databuf, 0, 4200);
+
+                    int packetsize = BitConverter.ToInt32(databuf, 0);
+                    byte[] processed = enc.ProcessInputData(databuf, 4, packetsize);
+
+                    Buffer.BlockCopy(databuf, 0, buffer, offset, count);
+                    Buffer.BlockCopy(databuf, count, HalfReceiveBuffer, 0, packetsize - count);
+                    HalfReceivedBufferLength = packetsize - count;
+                    return count;
                 }
                 else
                 {
-                    byte[] output = enc.ProcessInputData(newbuff, 0, recv);
-                    data = output;
-                    return recv;
+                    return Client.Receive(buffer, offset, count);
                 }
             }
             catch
@@ -180,22 +181,15 @@ namespace socks5.Socks5Client
             }
         }
 
-        public byte[] Receive()
-        {
-            byte[] m;
-            this.Receive(out m);
-            return m;
-        }
-
         public void ReceiveAsync()
         {
             if (enc.GetAuthType() != AuthTypes.Login && enc.GetAuthType() != AuthTypes.None)
             {
-                Client.ReceiveAsync(sizeof(int));
+                Client.ReceiveAsync(4);
             }
             else
             {
-                Client.ReceiveAsync(65535);
+                Client.ReceiveAsync(4096);
             }
         }
 
@@ -208,25 +202,18 @@ namespace socks5.Socks5Client
                 if (enc.GetAuthType() != AuthTypes.Login && enc.GetAuthType() != AuthTypes.None)
                 {
                     //get total number of bytes.
-                    int torecv = BitConverter.ToInt32(e.Buffer, e.Offset);
-
+                    int torecv = BitConverter.ToInt32(e.Buffer, 0);
                     byte[] newbuff = new byte[torecv];
-                    int recv = Client.Receive(newbuff, 0, newbuff.Length);
-                    
-                    if (recv == torecv)
+
+                    int recvd = Client.Receive(newbuff, 0, torecv);
+                    if (recvd == torecv)
                     {
-                        //yey
-                        //process packet.
-                        byte[] output = enc.ProcessInputData(newbuff, 0, recv);
+                        byte[] output = enc.ProcessInputData(newbuff, 0, recvd);
                         //receive full packet.
                         e.Buffer = output;
                         e.Offset = 0;
                         e.Count = output.Length;
                         this.OnDataReceived(this, new Socks5ClientDataArgs(this, e.Buffer, e.Count, e.Offset));
-                    }
-                    else
-                    {
-                        throw new Exception();
                     }
                 }
                 else

@@ -21,7 +21,7 @@ namespace socks5
         private List<DataHandler> Plugins = new List<DataHandler>();
 
         private int Timeout = 10000;
-        private int PacketSize = 65535;
+        private int PacketSize = 4096;
 
         public SocksTunnel(SocksClient p, SocksRequest req, SocksRequest req1, int packetSize, int timeout)
         {
@@ -155,9 +155,7 @@ namespace socks5
         {
             e.Request = this.ModifiedReq;
             foreach (DataHandler f in Plugins)
-                if(f.Enabled)
-                    f.OnServerDataReceived(this, e);
-
+                f.OnServerDataReceived(this, e);
             Client.Client.Send(e.Buffer, e.Offset, e.Count);
             if (!RemoteClient.Receiving)
                 RemoteClient.ReceiveAsync();
@@ -169,8 +167,7 @@ namespace socks5
         {
             e.Request = this.ModifiedReq;
             foreach (DataHandler f in Plugins)
-                if(f.Enabled)
-                    f.OnClientDataReceived(this, e);
+                f.OnClientDataReceived(this, e);
             
             RemoteClient.Send(e.Buffer, e.Offset, e.Count);
             if (!Client.Client.Receiving)

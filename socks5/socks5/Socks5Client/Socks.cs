@@ -12,7 +12,7 @@ namespace socks5.Socks5Client
     {
         public static AuthTypes Greet(Client client)
         {
-            client.Send(new byte[] { 0x05, Convert.ToByte(5), (byte)AuthTypes.None, (byte)AuthTypes.Login, (byte)AuthTypes.SocksCompress, (byte)AuthTypes.SocksEncrypt, (byte)AuthTypes.SocksBoth });
+            client.Send(new byte[] { 0x05, Convert.ToByte(3), (byte)AuthTypes.None, (byte)AuthTypes.Login, (byte)AuthTypes.SocksEncrypt });//(byte)AuthTypes.SocksBoth });//(byte)AuthTypes.SocksCompress
             byte[] buffer = new byte[512];
             int received = client.Receive(buffer, 0, buffer.Length);
             if(received > 0)
@@ -129,16 +129,12 @@ namespace socks5.Socks5Client
                         buffer = new byte[4096];
                         keysize = p.Client.Receive(buffer, 0, buffer.Length);
                         p.enc.SetKey(buffer, 0, keysize);
-                        //let them know we got it
-                        p.Client.Send(new byte[] { (byte)HeaderTypes.Socks5, (byte)HeaderTypes.Zero });
                         //now receive our encryption key.
                         enckeysize = p.Client.Receive(buffer, 0, buffer.Length);
                         //decrypt with our public key.
                         newkey = new byte[enckeysize];
                         Buffer.BlockCopy(buffer, 0, newkey, 0, enckeysize);
                         p.enc.SetEncKey(p.enc.key.Decrypt(newkey, false));
-                        //wait for server to confirm we got it.
-                        p.Client.Receive(buffer, 0, buffer.Length);
                         //now we share our encryption key.
 
                         p.Client.Send(p.enc.ShareEncryptionKey());

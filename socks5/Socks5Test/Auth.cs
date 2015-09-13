@@ -11,15 +11,16 @@ namespace Socks5Test
             return (user.Username == "test" && user.Password == "1234" ? LoginStatus.Correct : LoginStatus.Denied);
         }
 
+        private bool enabled = false;
         public override bool Enabled
         {
             get
             {
-                return true;
+                return this.enabled;
             }
             set
             {
-                throw new NotImplementedException();
+                this.enabled = value;
             }
         }
     }
