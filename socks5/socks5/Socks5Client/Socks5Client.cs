@@ -28,12 +28,20 @@ namespace socks5.Socks5Client
 
         public Encryption.SocksEncryption enc;
 
+        public IList<AuthTypes> UseAuthTypes { get; set; }
+
         public event EventHandler<Socks5ClientArgs> OnConnected = delegate { };
         public event EventHandler<Socks5ClientDataArgs> OnDataReceived = delegate { };
         public event EventHandler<Socks5ClientDataArgs> OnDataSent = delegate { };
         public event EventHandler<Socks5ClientArgs> OnDisconnected = delegate { };
 
+        private Socks5Client()
+        {
+            UseAuthTypes = new List<AuthTypes>(new[] { AuthTypes.None, AuthTypes.Login, AuthTypes.SocksEncrypt });
+        }
+
         public Socks5Client(string ipOrDomain, int port, string dest, int destport, string username = null, string password = null)
+            : this()
         {
             //Parse IP?
             if (!IPAddress.TryParse(ipOrDomain, out ipAddress))
@@ -56,6 +64,7 @@ namespace socks5.Socks5Client
             DoSocks(ipAddress, port, dest, destport, username, password);
         }
         public Socks5Client(IPAddress ip, int port, string dest, int destport, string username = null, string password = null)
+            : this()
         {
             DoSocks(ip, port, dest, destport, username, password);
         }
