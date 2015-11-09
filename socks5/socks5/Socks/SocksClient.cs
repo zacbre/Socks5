@@ -33,7 +33,7 @@ namespace socks5.Socks
             SocksEncryption w = null;
             List<object> lhandlers = PluginLoader.LoadPlugin(typeof(LoginHandler));
             //check out different auth types, none will have no authentication, the rest do.
-            if (lhandlers.Count > 0 && authtypes.Contains(AuthTypes.SocksBoth) || authtypes.Contains(AuthTypes.SocksEncrypt) || authtypes.Contains(AuthTypes.SocksCompress) || authtypes.Contains(AuthTypes.Login))
+            if (lhandlers.Count > 0 && (authtypes.Contains(AuthTypes.SocksBoth) || authtypes.Contains(AuthTypes.SocksEncrypt) || authtypes.Contains(AuthTypes.SocksCompress) || authtypes.Contains(AuthTypes.Login)))
             {
                 //this is the preferred method.
                 w = Socks5.RequestSpecialMode(authtypes, Client);
