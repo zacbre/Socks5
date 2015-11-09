@@ -86,9 +86,9 @@ namespace socks5.Socks5Client
                 p.Client.Disconnect();
                 return false;
             }
+            p.enc = new Encryption.SocksEncryption();
             if (auth != AuthTypes.None)
             {
-                p.enc = new Encryption.SocksEncryption();
                 switch (auth)
                 {
                     case AuthTypes.Login:
