@@ -10,9 +10,21 @@ namespace socks5.Socks5Client
 {
     public class Socks
     {
-        public static AuthTypes Greet(Client client)
+        public static AuthTypes Greet(Client client, IList<AuthTypes> supportedAuthTypes = null)
         {
-            client.Send(new byte[] { 0x05, Convert.ToByte(3), (byte)AuthTypes.None, (byte)AuthTypes.Login, (byte)AuthTypes.SocksEncrypt });//(byte)AuthTypes.SocksBoth });//(byte)AuthTypes.SocksCompress
+            if (supportedAuthTypes == null)
+                supportedAuthTypes = new[] { AuthTypes.None, AuthTypes.Login, AuthTypes.SocksEncrypt };
+
+            // https://www.ietf.org/rfc/rfc1928.txt [Page 3]
+            var bytes = new byte[supportedAuthTypes.Count + 2];
+            bytes[0] = 0x05; // protocol version - socks5
+            bytes[1] = (byte)supportedAuthTypes.Count;
+            for (var i = 0; i < supportedAuthTypes.Count; i++)
+            {
+                bytes[i + 2] = (byte)supportedAuthTypes[i];
+            }
+            client.Send(bytes);
+
             byte[] buffer = new byte[512];
             int received = client.Receive(buffer, 0, buffer.Length);
             if(received > 0)
@@ -80,7 +92,7 @@ namespace socks5.Socks5Client
 
         public static bool DoSocksAuth(Socks5Client p, string Username, string Password)
         {
-            AuthTypes auth = Socks.Greet(p.Client);
+            AuthTypes auth = Socks.Greet(p.Client, p.UseAuthTypes);
             if (auth == AuthTypes.Unsupported)
             {
                 p.Client.Disconnect();
