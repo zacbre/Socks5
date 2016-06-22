@@ -1,4 +1,22 @@
-﻿using socks5.Encryption;
+﻿/*
+    Socks5 - A full-fledged high-performance socks5 proxy server written in C#. Plugin support included.
+    Copyright (C) 2016 ThrDev
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using socks5.Encryption;
 using socks5.Plugin;
 using socks5.TCP;
 using System;
@@ -34,7 +52,7 @@ namespace socks5.Socks
             se = ph; 
         }
 
-        public void Open()
+        public void Open(IPAddress outboundIP)
         {
             if (ModifiedReq.Address == null || ModifiedReq.Port <= -1) { Client.Client.Disconnect(); return; }
 #if DEBUG
@@ -64,6 +82,7 @@ namespace socks5.Socks
             var socketArgs = new SocketAsyncEventArgs { RemoteEndPoint = new IPEndPoint(ModifiedReq.IP, ModifiedReq.Port) };
             socketArgs.Completed += socketArgs_Completed;
             RemoteClient.Sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            RemoteClient.Sock.Bind(new IPEndPoint(outboundIP, 0));
             if (!RemoteClient.Sock.ConnectAsync(socketArgs))
                 ConnectHandler(socketArgs);
         }
