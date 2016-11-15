@@ -1,7 +1,7 @@
 #Plugin Information
 
 With plugins, you can currently do the following:
-* Handle connections to the socks5 server and block by IP.
+* Handle connections to the socks5 server and allow/block by IP.
 * Handle/require a login for the Socks5 proxy.
 * Handle/modify incoming and outgoing data.
 * Handle/modify incoming connections, and rewrite them to different domains/addresses & ports.
