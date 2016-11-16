@@ -266,8 +266,10 @@ namespace socks5.Socks5Client
                 //try the greeting.
                 //Client.onDataReceived += Client_onDataReceived;
                 if(Socks.DoSocksAuth(this, Username, Password))
-                    if (Socks.SendRequest(Client, enc, Dest, Destport) == SocksError.Granted)
+                    if (Socks.SendRequest(Client, enc, Dest, Destport) == SocksError.Granted) {
+                        Client.onDataReceived += Client_onDataReceived;
                         return true;
+                    }
                 return false;
             }
             catch
