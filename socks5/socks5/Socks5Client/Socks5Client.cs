@@ -146,9 +146,9 @@ namespace socks5.Socks5Client
                 }
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
-                throw new Exception();
+                throw ex;
             }
         }
 
@@ -200,11 +200,11 @@ namespace socks5.Socks5Client
                     return Client.Receive(buffer, offset, count);
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 //disconnect.
                 Client.Disconnect();
-                throw new Exception();
+                throw ex;
             }
         }
 
@@ -248,11 +248,11 @@ namespace socks5.Socks5Client
                     this.OnDataReceived(this, new Socks5ClientDataArgs(this, e.Buffer, e.Count, e.Offset));
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 //disconnect.
                 Client.Disconnect();
-                throw new Exception();
+                throw ex;
             }
         }
 
