@@ -187,9 +187,7 @@ namespace socks5.Socks
                         }
                         byte[] po = new byte[2];
                         Array.Copy(buff, fwd, po, 0, 2);
-                        Int16 x = BitConverter.ToInt16(po, 0);
-                        int port = Convert.ToInt32(IPAddress.NetworkToHostOrder(x));
-                        port = (port < 1 ? port + 65536 : port);
+                        UInt16 port = BitConverter.ToUInt16(new byte[] { po[1], po[0] }, 0);
                         return new SocksRequest(StreamTypes.Stream, (AddressType)buff[3], address, port);
                     }
                 default:

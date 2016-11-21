@@ -130,6 +130,7 @@ namespace socks5
             }
         }
 
+        //All stats data is "Server" bandwidth stats, meaning clientside totals not counted.
         void Client_onDataSent(object sender, DataEventArgs e)
         {
             //Technically we are sending data from the remote server to the client, so it's being "received" 

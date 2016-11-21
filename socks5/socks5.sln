@@ -1,15 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "socks5", "socks5\socks5.csproj", "{B1A31708-7AC8-44C9-BBB3-999BEBE1FA5B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Socks5Test", "Socks5Test\Socks5Test.csproj", "{838E506D-EFE1-4B1E-B7F3-2302FAAD58A2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "socks5_minimal", "socks5_minimal\socks5_minimal.csproj", "{7E2758A8-4E3B-4AC9-9FA2-0F9FDD3E478B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Socks5_Minimal_Test", "Socks5_Minimal_Test\Socks5_Minimal_Test.csproj", "{DAD68EDE-71F5-4109-9817-55B89BD3B847}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestNewSocks5", "..\..\..\Visual Studio 2013\Projects\TestNewSocks5\TestNewSocks5\TestNewSocks5.csproj", "{394D5DAD-0337-4DA4-914C-F58B11740715}"
 EndProject
@@ -29,14 +25,6 @@ Global
 		{838E506D-EFE1-4B1E-B7F3-2302FAAD58A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{838E506D-EFE1-4B1E-B7F3-2302FAAD58A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{838E506D-EFE1-4B1E-B7F3-2302FAAD58A2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7E2758A8-4E3B-4AC9-9FA2-0F9FDD3E478B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7E2758A8-4E3B-4AC9-9FA2-0F9FDD3E478B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7E2758A8-4E3B-4AC9-9FA2-0F9FDD3E478B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7E2758A8-4E3B-4AC9-9FA2-0F9FDD3E478B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DAD68EDE-71F5-4109-9817-55B89BD3B847}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DAD68EDE-71F5-4109-9817-55B89BD3B847}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DAD68EDE-71F5-4109-9817-55B89BD3B847}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DAD68EDE-71F5-4109-9817-55B89BD3B847}.Release|Any CPU.Build.0 = Release|Any CPU
 		{394D5DAD-0337-4DA4-914C-F58B11740715}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{394D5DAD-0337-4DA4-914C-F58B11740715}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{394D5DAD-0337-4DA4-914C-F58B11740715}.Release|Any CPU.ActiveCfg = Release|Any CPU
