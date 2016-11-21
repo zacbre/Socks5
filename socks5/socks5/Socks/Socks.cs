@@ -209,9 +209,9 @@ namespace socks5.Socks
         public AddressType Type { get; set; }
         public StreamTypes StreamType { get; private set; }
         public string Address { get; set; }
-        public int Port { get; set; }
+        public ushort Port { get; set; }
         public SocksError Error { get; set; }
-        public SocksRequest(StreamTypes type, AddressType addrtype, string address, int port)
+        public SocksRequest(StreamTypes type, AddressType addrtype, string address, ushort port)
         {
             Type = addrtype;
             StreamType = type;
@@ -260,7 +260,7 @@ namespace socks5.Socks
             if(NetworkToHostOrder)
                 port = IPAddress.NetworkToHostOrder(Port);
             else
-                port = IPAddress.HostToNetworkOrder(Convert.ToInt16(Port));
+                port = IPAddress.HostToNetworkOrder(Port);
             
             if (Type == AddressType.IP)
             {

@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using socks5;
-using socks5.HTTP;
 namespace Socks5Test
 {
     class HTTPRewriter : socks5.Plugin.DataHandler
