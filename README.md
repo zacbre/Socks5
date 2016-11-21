@@ -1,6 +1,12 @@
+#About Socks5
+Socks5 is a Socks5 proxy server/client written in C#. The server is both high performance and low latency, with maximum throughput thought through.
+
+Socks5 includes massive plugin support, for doing things such as sniffing data, modifying inbound/outbound connections, and even giving the server firewall-like functionality.
+
 #Plugin Information
 
-With plugins, you can currently do the following:
+The current plugin list has the following functionality and examples included:
+
 * Handle connections to the socks5 server and allow/block by IP.
 * Handle/require a login for the Socks5 proxy.
 * Handle/modify incoming and outgoing data.
@@ -9,8 +15,8 @@ With plugins, you can currently do the following:
 
 #Included In This Branch
 
-Socks5 and Socks5_Minimal.
-Socks5 Minimal is a socks5 server with no plugin support, and is a lot better performing as well as smaller in size.
+Just the standard Socks5 library.
+Socks5Minimal is no longer supported.
 
 #Security
 
