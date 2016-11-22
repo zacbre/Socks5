@@ -1,0 +1,2 @@
+language: csharp
+solution: socks5/socks5.sln
