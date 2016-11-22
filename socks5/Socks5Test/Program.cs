@@ -34,13 +34,29 @@ namespace Socks5Test
             Socks5Server x = new Socks5Server(IPAddress.Any, 1080);
             PluginLoader.ChangePluginStatus(false, typeof(Auth));
             x.Start();
+            Socks5Client m = new Socks5Client("localhost", 1080, "portquiz.net", 65532);
+            m.OnConnected += M_OnConnected;
+            m.OnDataReceived += M_OnDataReceived;
+            m.ConnectAsync();
             while (true)
             {
-                Console.Clear();
+                /*Console.Clear();
                 Console.Write("Total Clients: \t{0}\nTotal Recvd: \t{1:0.00##}MB\nTotal Sent: \t{2:0.00##}MB\n", x.Stats.TotalClients, ((x.Stats.NetworkReceived / 1024f) / 1024f), ((x.Stats.NetworkSent / 1024f) / 1024f));
-                Console.Write("Receiving/sec: \t{0}\nSending/sec: \t{1}", x.Stats.BytesReceivedPerSec, x.Stats.BytesSentPerSec);
+                Console.Write("Receiving/sec: \t{0}\nSending/sec: \t{1}", x.Stats.BytesReceivedPerSec, x.Stats.BytesSentPerSec);*/
                 Thread.Sleep(1000);
             }
+        }
+
+        private static void M_OnDataReceived(object sender, Socks5ClientDataArgs e)
+        {
+            Console.WriteLine(Encoding.ASCII.GetString(e.Buffer));
+            e.Client.ReceiveAsync();
+        }
+
+        private static void M_OnConnected(object sender, Socks5ClientArgs e)
+        {
+            e.Client.ReceiveAsync();
+            e.Client.Send(Encoding.ASCII.GetBytes("GET / HTTP/1.1\r\nHost: portquiz.net\r\n\r\n"));
         }
     }
 }

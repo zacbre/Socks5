@@ -258,9 +258,9 @@ namespace socks5.Socks
 			byte[] data;
 			var port = 0;
 			if(NetworkToHostOrder)
-				port = IPAddress.NetworkToHostOrder((ushort)Port);
+				port = IPAddress.NetworkToHostOrder(Port);
 			else
-				port = IPAddress.HostToNetworkOrder((ushort)Port);
+				port = IPAddress.HostToNetworkOrder((short)Port);
 
 			if (Type == AddressType.IP)
 			{
