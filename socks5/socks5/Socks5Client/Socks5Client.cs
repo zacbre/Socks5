@@ -304,7 +304,7 @@ namespace socks5.Socks5Client
 
         public bool Connected
         {
-            get { return Client.Sock.Connected; }
+            get { return (Client != null ? Client.Sock.Connected : false); }
         }
         //send.
 
