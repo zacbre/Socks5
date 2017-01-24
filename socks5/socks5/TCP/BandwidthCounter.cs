@@ -71,6 +71,45 @@ namespace socks5
                 }
             }
 
+
+            public ulong BytesPerSec()
+            {
+                if (gbytes > 0)
+                {
+                    double ret = (double)gbytes + ((double)((double)mbytes / 1024));
+                    ret = ret / (DateTime.Now - lastRead).TotalSeconds;
+
+                    lastRead = DateTime.Now;
+                    
+                    return (ulong)(((ret * 1024) * 1024) * 1024);
+                }
+                else if (mbytes > 0)
+                {
+                    double ret = (double)mbytes + ((double)((double)kbytes / 1024));
+                    ret = ret / (DateTime.Now - lastRead).TotalSeconds;
+
+                    lastRead = DateTime.Now;
+
+                    return (ulong)((ret * 1024) * 1024);
+                }
+                else if (kbytes > 0)
+                {
+                    double ret = (double)kbytes + ((double)((double)bytes / 1024));
+                    ret = ret / (DateTime.Now - lastRead).TotalSeconds;
+                    lastRead = DateTime.Now;
+
+                    return (ulong)(ret * 1024);
+                }
+                else
+                {
+                    double ret = bytes;
+                    ret = ret / (DateTime.Now - lastRead).TotalSeconds;
+                    lastRead = DateTime.Now;
+
+                    return (ulong)ret;
+                }
+            }
+
             /// <summary>
             /// Returns the bits per second since the last time this function was called
             /// </summary>
@@ -169,6 +208,13 @@ namespace socks5
             string s = perSecond.ToString() + "/s";
             perSecond = new MiniCounter();
             return s;
+        }
+
+        public ulong GetPerSecondNumeric()
+        {
+            ulong val = perSecond.BytesPerSec();
+            perSecond = new MiniCounter();
+            return val;
         }
 
         /// <summary>

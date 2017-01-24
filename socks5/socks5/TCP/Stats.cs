@@ -71,11 +71,12 @@ namespace socks5.TCP
 
         public ulong PacketsSent { get; private set; }
         public ulong PacketsReceived { get; private set; }
+
+        public ulong BytesReceivedPerSec { get { return rc.GetPerSecondNumeric(); } }
+        public ulong BytesSentPerSec { get { return sc.GetPerSecondNumeric(); } }
         //per sec.
-        public string BytesReceivedPerSec { get { return rc.GetPerSecond(); } }
-        public string BytesSentPerSec
-        {
-            get { return sc.GetPerSecond(); }
+        public string SBytesReceivedPerSec { get { return rc.GetPerSecond(); } }
+        public string SBytesSentPerSec { get { return sc.GetPerSecond(); }
         }
     }
     public enum PacketType
