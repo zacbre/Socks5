@@ -26,6 +26,11 @@ namespace socks5.ExamplePlugins
 {
     public class LoginHandlerExample : LoginHandler
     {
+        public override bool OnStart()
+        {
+            return true;
+        }
+
         public override LoginStatus HandleLogin(User user)
         {
             return (user.Username == "thrdev" && user.Password == "testing1234" ? LoginStatus.Correct : LoginStatus.Denied);

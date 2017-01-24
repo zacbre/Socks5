@@ -25,6 +25,7 @@ namespace socks5.Plugin
 {
     public abstract class ClientDisconnectedHandler : GenericPlugin
     {
+        public abstract bool OnStart();
         /// <summary>
         /// Handle client disconnected callback. Useful for keeping track of connected clients.
         /// </summary>

@@ -24,6 +24,7 @@ namespace socks5.Plugin
 {
     public interface GenericPlugin
     {
+        bool OnStart();
         bool Enabled { get; set; }
     }
 }

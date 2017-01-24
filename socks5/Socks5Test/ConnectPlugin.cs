@@ -6,6 +6,11 @@ namespace Socks5Test
 {
     class ConnectPlugin : socks5.Plugin.ConnectHandler
     {
+        public override bool OnStart()
+        {
+            return true;
+        }
+
         public override bool OnConnect(socks5.Socks.SocksRequest Request)
         {
             Console.WriteLine(Request.Port);

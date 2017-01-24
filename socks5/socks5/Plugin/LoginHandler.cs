@@ -30,6 +30,7 @@ namespace socks5.Plugin
     }
     public abstract class LoginHandler : GenericPlugin
     {
+        public abstract bool OnStart();
         public abstract LoginStatus HandleLogin(User user);
         public abstract bool Enabled { get; set; }
         //

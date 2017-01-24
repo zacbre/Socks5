@@ -24,6 +24,11 @@ namespace Socks5Test
 {
     class Auth : LoginHandler
     {
+        public override bool OnStart()
+        {
+            return true;
+        }
+
         public override LoginStatus HandleLogin(socks5.Socks.User user)
         {
             return (user.Username == "test" && user.Password == "1234" ? LoginStatus.Correct : LoginStatus.Denied);

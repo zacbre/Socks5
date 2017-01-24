@@ -25,6 +25,11 @@ namespace socks5.ExamplePlugins
 {
     public class DataHandlerExample : DataHandler
     {
+        public override bool OnStart()
+        {
+            return true;
+        }
+
         //private string httpString = "HTTP/1.1";
         private bool enabled = false;
         public override bool Enabled

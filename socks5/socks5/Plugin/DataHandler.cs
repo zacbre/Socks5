@@ -39,6 +39,8 @@ namespace socks5.Plugin
         /// <param name="e"></param>
         public abstract void OnClientDataReceived(object sender, DataEventArgs e);
 
+        public abstract bool OnStart();
+
         public abstract bool Enabled { get; set; }
     }
 }

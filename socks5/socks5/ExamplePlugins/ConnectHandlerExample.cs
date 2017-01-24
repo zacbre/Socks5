@@ -25,6 +25,11 @@ namespace socks5.ExamplePlugins
 {
     public class ConnectHandlerExample : ConnectHandler
     {
+        public override bool OnStart()
+        {
+            return true;
+        }
+
         public override bool OnConnect(Socks.SocksRequest Request)
         {
             //Compare data.

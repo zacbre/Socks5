@@ -26,6 +26,7 @@ namespace socks5.Plugin
 {
     public abstract class ConnectHandler : GenericPlugin
     {
+        public abstract bool OnStart();
         /// <summary>
         /// Handle request callback.
         /// </summary>

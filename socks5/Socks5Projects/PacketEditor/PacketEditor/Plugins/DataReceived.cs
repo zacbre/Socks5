@@ -7,6 +7,11 @@ namespace PacketEditor.Plugins
 {
     class DataReceived : socks5.Plugin.DataHandler
     {
+        public override bool OnStart()
+        {
+            return true;
+        }
+
         string replaceWith = "X-Requested-With: Socks5Debugger-Thr";
 
         private bool enabled = true;

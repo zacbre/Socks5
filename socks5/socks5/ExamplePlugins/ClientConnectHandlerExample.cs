@@ -24,6 +24,11 @@ namespace socks5.ExamplePlugins
 {
     class ClientConnectHandlerExample : socks5.Plugin.ClientConnectedHandler
     {
+        public override bool OnStart()
+        {
+            return true;
+        }
+
         public override bool OnConnect(TCP.Client Client, System.Net.IPEndPoint IP)
         {
             if (IP.Address.ToString() != "127.0.0.1")

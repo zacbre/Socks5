@@ -25,6 +25,7 @@ namespace socks5.Plugin
 {
     public abstract class ClientConnectedHandler : GenericPlugin
     {
+        public abstract bool OnStart();
         /// <summary>
         /// Handle client connected callback. Useful for IPblocking.
         /// </summary>
