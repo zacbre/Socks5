@@ -81,7 +81,7 @@ namespace socks5.Socks5Client
             return 0;
         }
 
-        public static socks5.Socks.SocksError SendRequest(Client cli, SocksEncryption enc, string ipOrDomain, ushort port)
+        public static socks5.Socks.SocksError SendRequest(Client cli, SocksEncryption enc, string ipOrDomain, int port)
         {
             AddressType type;
             IPAddress ipAddress;

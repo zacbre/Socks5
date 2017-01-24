@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ThrDev/Socks5.svg?branch=master)](https://travis-ci.org/ThrDev/Socks5)
+
 #About Socks5
 Socks5 is a Socks5 proxy server/client written in C#. The server is both high performance and low latency, with maximum throughput thought through.
 

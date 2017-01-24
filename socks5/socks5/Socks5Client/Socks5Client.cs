@@ -266,7 +266,7 @@ namespace socks5.Socks5Client
                 //try the greeting.
                 //Client.onDataReceived += Client_onDataReceived;
                 if(Socks.DoSocksAuth(this, Username, Password))
-                    if (Socks.SendRequest(Client, enc, Dest, (ushort)Destport) == SocksError.Granted) {
+                    if (Socks.SendRequest(Client, enc, Dest, Destport) == SocksError.Granted) {
                         Client.onDataReceived += Client_onDataReceived;
                         return true;
                     }
@@ -292,7 +292,7 @@ namespace socks5.Socks5Client
             }
             if (Socks.DoSocksAuth(this, Username, Password))
             {
-                SocksError p = Socks.SendRequest(Client, enc, Dest, (ushort)Destport);
+                SocksError p = Socks.SendRequest(Client, enc, Dest, Destport);
                 Client.onDataReceived += Client_onDataReceived;
                 this.OnConnected(this, new Socks5ClientArgs(this, p));
                 
@@ -304,7 +304,7 @@ namespace socks5.Socks5Client
 
         public bool Connected
         {
-            get { return Client.Sock.Connected; }
+            get { return (Client != null ? Client.Sock.Connected : false); }
         }
         //send.
 
