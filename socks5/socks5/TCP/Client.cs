@@ -1,30 +1,4 @@
-﻿/*
-    Socks5 - A full-fledged high-performance socks5 proxy server written in C#. Plugin support included.
-    Copyright (C) 2016 ThrDev
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-using System;
-using System.Collections.Generic;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading;
-
-namespace socks5.TCP
-{
-    public class Client
+public class Client : System.IO.Stream
     {
         public event EventHandler<ClientEventArgs> onClientDisconnected;
 
@@ -32,6 +6,52 @@ namespace socks5.TCP
         public event EventHandler<DataEventArgs> onDataSent = delegate { };
 
         public Socket Sock { get; set; }
+
+        public override bool CanRead
+        {
+            get
+            {
+                return Sock.Connected;
+            }
+        }
+
+        public override bool CanSeek
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public override bool CanWrite
+        {
+            get
+            {
+                return Sock.Connected;
+            }
+        }
+
+        public override long Length
+        {
+            get
+            {
+                return 0;
+            }
+        }
+
+        public override long Position
+        {
+            get
+            {
+                return 0;
+            }
+
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         private byte[] buffer;
         private int packetSize = 4096;
         public bool Receiving = false;
@@ -74,6 +94,16 @@ namespace socks5.TCP
             }
         }
 
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            return Receive(buffer, offset, count);
+        }
+
+        public override void Write(byte[] buffer, int offset, int count)
+        {
+            Send(buffer, offset, count);
+        }
+
         public int Receive(byte[] data, int offset, int count)
         {
             try
@@ -97,7 +127,7 @@ namespace socks5.TCP
                 return -1;
             }
         }
-
+        
         public void ReceiveAsync(int buffersize = -1)
         {
             try
@@ -215,15 +245,8 @@ namespace socks5.TCP
         }
         bool disposed = false;
 
-        // Public implementation of Dispose pattern callable by consumers. 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
         // Protected implementation of Dispose pattern. 
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
 
             if (disposed)
@@ -245,6 +268,21 @@ namespace socks5.TCP
             // Free any unmanaged objects here. 
             //
             
+        }
+
+        public override void Flush()
+        {
+            
+        }
+
+        public override long Seek(long offset, SeekOrigin origin)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SetLength(long value)
+        {
+            throw new NotImplementedException();
         }
     }
 }
