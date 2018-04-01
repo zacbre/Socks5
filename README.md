@@ -1,13 +1,14 @@
 [![Build Status](https://travis-ci.org/ThrDev/Socks5.svg?branch=master)](https://travis-ci.org/ThrDev/Socks5)
 
 # About Socks5
-Socks5 is a Socks5 proxy server/client written in C#. The server is both high performance and low latency, with maximum throughput thought through.
+Socks5 is a Socks5 proxy server/client written in C#. The server has high  performance and low latency with 
+maximum throughput .
 
-Socks5 includes massive plugin support, for doing things such as sniffing data, modifying inbound/outbound connections, and even giving the server firewall-like functionality.
+Socks5 includes massive plugin support for sniffing data, modifying inbound/outbound connections, and giving the server firewall-like functionality.
 
 # Plugin Information
 
-The current plugin list has the following functionality and examples included:
+The current plugin list has the following functionality and example:
 
 * Handle connections to the socks5 server and allow/block by IP.
 * Handle/require a login for the Socks5 proxy.
