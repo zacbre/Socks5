@@ -20,10 +20,20 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using socks5.Plugin;
+using socks5.Socks;
+
 namespace Socks5Test
 {
     class Auth : LoginHandler
     {
+        public static void Initialize(string user, string password)
+        {
+            User = user;
+            Password = password;
+        }
+        static string User { get; set; }
+        static string Password { get; set; }
+
         public override bool OnStart()
         {
             return true;
@@ -31,7 +41,13 @@ namespace Socks5Test
 
         public override LoginStatus HandleLogin(socks5.Socks.User user)
         {
-            return (user.Username == "test" && user.Password == "1234" ? LoginStatus.Correct : LoginStatus.Denied);
+            var allowAccess = user.Username == User && user.Password == Password;
+            if (!allowAccess)
+            {
+                Console.WriteLine($"Access denied for user '{user.Username}' & password '{user.Password}'.");
+            }
+
+            return allowAccess ? LoginStatus.Correct : LoginStatus.Denied;
         }
 
         private bool enabled = false;

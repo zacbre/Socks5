@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "socks5.core.server": {
+      "commandName": "Project",
+      "commandLineArgs": "-p 8080"
+    }
+  }
+}
