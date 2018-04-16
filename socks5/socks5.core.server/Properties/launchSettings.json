@@ -2,7 +2,7 @@
   "profiles": {
     "socks5.core.server": {
       "commandName": "Project",
-      "commandLineArgs": "-p 8080"
+      "commandLineArgs": "-p 8080 -u telega -pwd 123"
     }
   }
 }
