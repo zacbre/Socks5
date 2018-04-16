@@ -135,19 +135,18 @@ namespace socks5.Socks
 
 		public static User RequestLogin(SocksClient client)
 		{
-			//request authentication.
-			client.Client.Send(new byte[] { (byte)HeaderTypes.Socks5, (byte)AuthTypes.Login });
-			byte[] buff;
-			int recv = Receive(client.Client, out buff);
+			////request authentication.
+            client.Client.Send(new byte[] { (byte)HeaderTypes.Socks5, (byte)AuthTypes.Login });
+            int recv = Receive(client.Client, out var buff);
 
-			if (buff == null || buff[0] != 0x01) return null;
+            if (buff == null || buff[0] != 0x01) return null;
 
 			int numusername = Convert.ToInt32(buff[1]);
 			int numpassword = Convert.ToInt32(buff[(numusername + 2)]);
 			string username = Encoding.ASCII.GetString(buff, 2, numusername);
 			string password = Encoding.ASCII.GetString(buff, numusername + 3, numpassword);
 
-			return new User(username, password, (IPEndPoint)client.Client.Sock.RemoteEndPoint);
+			return new User(buff[0], username, password, (IPEndPoint)client.Client.Sock.RemoteEndPoint);
 		}
 
 		public static SocksRequest RequestTunnel(SocksClient client, SocksEncryption ph)

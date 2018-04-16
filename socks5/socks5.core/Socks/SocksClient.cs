@@ -69,16 +69,15 @@ namespace socks5.Socks
 						return;
 					}
 					LoginStatus status = lh.HandleLogin(user);
-					Client.Send(new byte[] { (byte)HeaderTypes.Socks5, (byte)status });
-					if (status == LoginStatus.Denied)
-					{
-						Client.Disconnect();
+                    Client.Send(new byte[] {user.AuthTypeVersion, (byte)status });
+                    if (status == LoginStatus.Denied)
+                    {
+                        Client.Disconnect();
 						return;
 					}
 					else if (status == LoginStatus.Correct)
 					{
 						Authenticated = (w.GetAuthType() == AuthTypes.Login ? 1 : 2);
-                        Client.Send(new byte[] { (byte)HeaderTypes.Socks5, (byte)HeaderTypes.Zero });
                         break;
 					}
                 }
@@ -156,11 +155,13 @@ namespace socks5.Socks
     }
     public class User
     {
+        public byte AuthTypeVersion { get; private set; }
         public string Username { get; private set; }
         public string Password { get; private set; }
         public IPEndPoint IP { get; private set; }
-        public User(string un, string pw, IPEndPoint ip)
+        public User(byte authTypeVer, string un, string pw, IPEndPoint ip)
         {
+            AuthTypeVersion = authTypeVer;
             Username = un;
             Password = pw;
             IP = ip;
