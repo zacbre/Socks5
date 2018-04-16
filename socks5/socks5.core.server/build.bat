@@ -1,0 +1,1 @@
+﻿dotnet publish -r debian.8-x64
