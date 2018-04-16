@@ -1,13 +1,14 @@
 ﻿using System;
-using System.IO;
 using Microsoft.Extensions.CommandLineUtils;
 
 namespace socks5.core.server
 {
     class Program
     {
+        static Socks5ServerWrapper server;
         static void Main(string[] args)
         {
+            Console.CancelKeyPress += ConsoleOnCancelKeyPress;
             var app = new CommandLineApplication
             {
                 Name = "socks5.core.server",
@@ -27,7 +28,8 @@ namespace socks5.core.server
                     && pwdOption.HasValue())
                 {
                     Console.WriteLine($"Server listen port: {port}");
-                    new Socks5ServerWrapper().Start(port, userOption.Value(), pwdOption.Value());
+                    server = new Socks5ServerWrapper();
+                    server.Start(port, userOption.Value(), pwdOption.Value());
                 }
                 else
                 {
@@ -37,6 +39,12 @@ namespace socks5.core.server
             });
 
             app.Execute(args);
+        }
+
+        private static void ConsoleOnCancelKeyPress(object sender, ConsoleCancelEventArgs consoleCancelEventArgs)
+        {
+            Console.WriteLine("Stop server.");
+            server.Stop();
         }
     }
 }

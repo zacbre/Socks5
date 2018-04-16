@@ -50,7 +50,7 @@ namespace Socks5Test
             return allowAccess ? LoginStatus.Correct : LoginStatus.Denied;
         }
 
-        private bool enabled = false;
+        private bool enabled = true;
         public override bool Enabled
         {
             get

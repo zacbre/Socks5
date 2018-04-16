@@ -8,9 +8,11 @@ namespace socks5.core.server
 {
     public class Socks5ServerWrapper
     {
+        private Socks5Server x;
+
         public void Start(int port, string userName, string password)
         {
-            var x = new Socks5Server(IPAddress.Any, port);
+            x = new Socks5Server(IPAddress.Any, port);
             Auth.Initialize(userName, password);
             PluginLoader.ChangePluginStatus(true, typeof(Auth));
             x.Start();
@@ -22,6 +24,11 @@ namespace socks5.core.server
                 Console.Write("Receiving/sec: \t{0}\nSending/sec: \t{1}", x.Stats.SBytesReceivedPerSec, x.Stats.SBytesSentPerSec);
                 Thread.Sleep(TimeSpan.FromHours(1));
             }
+        }
+
+        public void Stop()
+        {
+            x.Stop();
         }
     }
 }
