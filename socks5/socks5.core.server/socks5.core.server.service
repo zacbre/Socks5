@@ -1,0 +1,15 @@
+[Unit]
+Description=socks5.core.server.service
+After=network.target
+
+[Service]
+#WorkingDirectory=/home/dimond/socks5.core.server/ #путь к publish папке вашего приложения
+ExecStart=/usr/bin/dotnet /home/dimond/socks5.core.server/socks5.core.server.dll -p 8080 -u telega -pwd 123
+Restart=always
+RestartSec=10 # Перезапускать сервис через 10 секунд при краше приложения
+#SyslogIdentifier=socks5.core.server.service
+#User=dimond # пользователь, под которым следует запускать ваш сервис
+#Environment=ASPNETCORE_ENVIRONMENT=Production 
+
+[Install]
+WantedBy=multi-user.target

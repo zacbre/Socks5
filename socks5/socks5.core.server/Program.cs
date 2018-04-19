@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Runtime.Loader;
+using System.Threading.Tasks;
 using Microsoft.Extensions.CommandLineUtils;
 
 namespace socks5.core.server
@@ -6,9 +8,14 @@ namespace socks5.core.server
     class Program
     {
         static Socks5ServerWrapper server;
+        private static TaskCompletionSource<object> taskToWait;
+
         static void Main(string[] args)
         {
-            Console.CancelKeyPress += ConsoleOnCancelKeyPress;
+            taskToWait = new TaskCompletionSource<object>();
+            AssemblyLoadContext.Default.Unloading += SigTermEventHandler;
+            Console.CancelKeyPress += new ConsoleCancelEventHandler(CancelHandler);
+
             var app = new CommandLineApplication
             {
                 Name = "socks5.core.server",
@@ -30,6 +37,10 @@ namespace socks5.core.server
                     Console.WriteLine($"Server listen port: {port}");
                     server = new Socks5ServerWrapper();
                     server.Start(port, userOption.Value(), pwdOption.Value());
+                    taskToWait.Task.Wait();
+                    server.Stop();
+                    AssemblyLoadContext.Default.Unloading -= SigTermEventHandler;
+                    Console.CancelKeyPress -= new ConsoleCancelEventHandler(CancelHandler);
                 }
                 else
                 {
@@ -41,10 +52,16 @@ namespace socks5.core.server
             app.Execute(args);
         }
 
-        private static void ConsoleOnCancelKeyPress(object sender, ConsoleCancelEventArgs consoleCancelEventArgs)
+        private static void CancelHandler(object sender, ConsoleCancelEventArgs e)
         {
-            Console.WriteLine("Stop server.");
-            server.Stop();
+            System.Console.WriteLine("Exiting...");
+            taskToWait.TrySetResult(null);
+        }
+
+        private static void SigTermEventHandler(AssemblyLoadContext obj)
+        {
+            System.Console.WriteLine("Unloading...");
+            taskToWait.TrySetResult(null);
         }
     }
 }

@@ -1,1 +1,1 @@
-dotnet publish -r debian.8-x64
+dotnet publish -r debian.8-x64 -c Release
