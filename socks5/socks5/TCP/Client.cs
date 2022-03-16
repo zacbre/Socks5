@@ -129,6 +129,7 @@ namespace socks5.TCP
                     if (this.Sock != null && this.Sock.Connected)
                     {
                         onClientDisconnected(this, new ClientEventArgs(this));
+                        this.Sock.Shutdown(SocketShutdown.Both);
                         this.Sock.Close();
                         //this.Sock = null;
                         return;
