@@ -1,4 +1,6 @@
-[![Build Status](https://travis-ci.org/ThrDev/Socks5.svg?branch=master)](https://travis-ci.org/ThrDev/Socks5)
+# Update: May 2023
+Fear not! This repo is not dead! This project has undergone a massive overhaul to support .net 7 and fix several bugs and make several performance optimizations.
+Much work is still needed (i.e a github actions runner that updates a nuget package, etc) on this project to keep it up to date.
 
 # About Socks5
 Socks5 is a Socks5 proxy server/client written in C#. The server is both high performance and low latency, with maximum throughput thought through.

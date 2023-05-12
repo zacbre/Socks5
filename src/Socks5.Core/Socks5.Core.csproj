@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Authors>zacbre</Authors>
+        <Copyright>zacbre</Copyright>
+        <PackageProjectUrl>https://github.com/zacbre/Socks5</PackageProjectUrl>
+    </PropertyGroup>
+
+</Project>
